@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import logging
+import sys
 
 __author__ = ''
 
@@ -43,8 +44,11 @@ class IGoogle2Opml(object):
     pass
 
 if __name__ == '__main__':
+  if len(sys.argv) > 1:
     in_file = open(sys.argv[1])
     in_file_doc = in_file.read()
     translator = IGoogle2Opml(in_file_doc)
     print translator.Translate()
     in_file.close()
+  else:
+    print "Usage: %s [file_to_transform]" % sys.argv[0]
