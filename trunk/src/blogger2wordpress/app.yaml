@@ -1,0 +1,16 @@
+application: blogger2wordpress
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+- url: /b2wp/.*
+  script: blogger2wordpress.py
+
+- url: /
+  static_files: static/index.html
+  upload: static/index.html
+
+- url: /(.*\.(png|html))
+  static_files: static/\1
+  upload: static/(.*\.(png|html))
