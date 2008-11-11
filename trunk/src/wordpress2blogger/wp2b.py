@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os.path
 import logging
 import re
 import sys
@@ -34,6 +35,7 @@ CATEGORY_KIND = 'http://schemas.google.com/g/2005#kind'
 POST_KIND = 'http://schemas.google.com/blogger/2008/kind#post'
 COMMENT_KIND = 'http://schemas.google.com/blogger/2008/kind#comment'
 ATOM_TYPE = 'application/atom+xml'
+HTML_TYPE = 'text/html'
 ATOM_THREADING_NS = 'http://purl.org/syndication/thread/1.0'
 
 WP_YOUTUBE_RE = re.compile('\[youtube=http://www.youtube.com/watch\?v=([^\]]+)\]')
@@ -106,6 +108,7 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
     """
     # Create the top-level feed object
     self.feed = gdata.GDataFeed()
+    self.feed.generator = atom.Generator(text='Blogger')
     self.elem_stack = []
     self.contents = ''
     self.outfile = outfile
@@ -143,10 +146,7 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
     self.contents += content
 
   def endDocument(self):
-    # Write the contents of the feed to a file
-    #  import xml.dom.minidom
-    #  output_dom = xml.dom.minidom.parseString(str(feed))
-    #  outfile.write(output_dom.toprettyxml(encoding="utf-8"))
+    # Write the contents of the feed
     self.outfile.write(str(self.feed))
 
   ###################################
@@ -159,6 +159,13 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
       self.feed.title = atom.Title('html', text=content)
     elif parent == 'item' and self.current_post:
       self.current_post.title = atom.Title('html', content)
+
+  def endPubdate(self, content):
+    if not self.current_post:
+      self.feed.published = atom.Published(
+          self._ToBlogTime(self._WordpressPubDateToTime(content)))
+      self.feed.updated = atom.Updated(
+          self._ToBlogTime(self._WordpressPubDateToTime(content)))
 
   def startItem(self):
     self.current_post = gdata.GDataEntry()
@@ -189,6 +196,13 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
     if self.current_post:
       self.current_post.link.append(atom.Link(href=content, rel='self',
                                               link_type=ATOM_TYPE))
+      self.current_post.link.append(atom.Link(href=content, rel='alternate',
+                                              link_type=HTML_TYPE))
+    else:
+      self.feed.link.append(atom.Link(href=content, rel='self',
+                                              link_type=ATOM_TYPE))
+      self.feed.link.append(atom.Link(href=content, rel='alternate',
+                                              link_type=HTML_TYPE))
 
   def endCreator(self, content):
     if self.current_post:
@@ -273,144 +287,10 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
   def endComment_Date_Gmt(self, content):
     self.endComment_Date(content)
 
+
   ###################################
-  # Deprecated methods
+  # Helper methods
   ###################################
-
-  def _Translate(self, doc, outfile):
-    """Performs the actual translation to a Blogger export format.
-
-    Args:
-      doc: The input WXR file as a string
-      outfile: The output file that should receive the translated document
-    Returns:
-      A Blogger export Atom document as a string, or None on error.
-    """
-    # Decompose the XML into a feed object
-    self.feed = BeautifulSoup.RobustXMLParser(doc)
-
-    # Search for one channel element, if it's not found, we don't have
-    # a valid WXR wordpress document.
-    channel = self.feed.find('channel')
-    if not channel:
-      raise 'NoChannelFoundException'
-
-    # Set the title of the blog
-    feed = gdata.GDataFeed(atom.Title('html',
-                                      text=self.Find(self.feed, 'title')))
-
-    # Iterate through the posts/comments and add entries to the feed
-    for entry in self.GetEntries():
-      feed.entry.append(entry)
-
-    # Write the contents of the feed to a file
-    #  import xml.dom.minidom
-    #  output_dom = xml.dom.minidom.parseString(str(feed))
-    #  outfile.write(output_dom.toprettyxml(encoding="utf-8"))
-    outfile.write(str(feed))
-
-
-  def GetEntries(self):
-    """Iterator that extract posts and comments from the wordpress document.
-
-    Yields:
-      Atom entries that should be added to the top-level Atom feed object.
-    """
-
-    for post in self.feed('item'):
-      if self.Find(post, 'wp:post_type') == 'post':
-
-        # Do not duplicate categories and ignore the 'Uncategorized' label
-        categories = set([c.string for c in post('category')])
-        categories.discard('Uncategorized')
-
-        # Output the post
-        yield self.TranslatePost(post, categories)
-
-        # Output the comments for the post
-        for comment in post('wp:comment'):
-          # Only include approved comments
-          approved = self.Find(comment, 'wp:comment_approved')
-          if approved == '1':
-            entry = self.TranslateComment(post, comment)
-            if entry:
-              yield entry
-
-  def TranslatePost(self, post, categories):
-    """Converts a post from a WXR file to a post in Blogger Atom format.
-
-    Args:
-      post: The XML element from the WXR document containing one post
-      categories:  A list of strings which are the categories assigned to the
-                   post.
-      is_draft:  Whether the post is marked as a draft
-    Returns:
-      An Atom entry containing the same information only in Blogger Atom format.
-    """
-    entry = gdata.GDataEntry()
-    entry.id = atom.Id('post-' + self.Find(post, 'wp:post_id'))
-
-    entry.published = atom.Published(self.GetPostPublishedDate(post))
-
-    entry.category.extend([atom.Category(c, CATEGORY_NS) for c in categories])
-    entry.category.append(atom.Category(scheme=CATEGORY_KIND, term=POST_KIND))
-
-    entry.title = atom.Title('html', self.Find(post, 'title'))
-
-    content = self.TranslateContent(self.Find(post, 'content:encoded'))
-    entry.content = atom.Content('html', text=content)
-
-    entry.author.append(
-        atom.Author(atom.Name(text=self.Find(post, 'dc:creator'))))
-    entry.link.append(atom.Link(href=self.Find(post, 'link'),
-                                rel='self',
-                                link_type=ATOM_TYPE))
-
-    if self.Find(post, 'wp:status') == 'draft':
-      entry.control = atom.Control(atom.Draft('yes'))
-    return entry
-
-  def TranslateComment(self, post, comment):
-    """Converts a comment from a WXR file to a comment in Blogger Atom format.
-
-    Args:
-      post: The XML element from the WXR document containing one post
-      comment:  The XML element from the WXR document containing a comment for
-                the post.
-    Returns:
-      An Atom entry containing the same information only in Blogger Atom format.
-    """
-
-    entry = gdata.GDataEntry()
-
-    post_id = 'post-%s' % self.Find(post, 'wp:post_id')
-    entry.id = atom.Id('%s.comment-%s' %
-                       (post_id, self.Find(comment, 'wp:comment_id')))
-
-    author_name = self.Find(comment, 'wp:comment_author')
-    author_email = self.Find(comment, 'wp:comment_author_email')
-    author_uri = self.Find(comment, 'wp:comment_author_url')
-    author = atom.Author(atom.Name(text=author_name))
-    if author_email:
-      author.email = atom.Email(text=author_email)
-    if author_uri and author_uri != 'http://':
-      author.uri = atom.Uri(text=author_uri)
-    entry.author.append(author)
-
-    content = self.TranslateContent(self.Find(comment, 'wp:comment_content'))
-    # Blogger doesn't really like comments that are empty
-    if not content:
-      return None
-
-    entry.content = atom.Content('html', text=content)
-    entry.published = atom.Published(self.GetCommentPublishedDate(comment))
-    entry.category.append(atom.Category(scheme=CATEGORY_KIND,
-                                        term=COMMENT_KIND))
-    entry.extension_elements.append(InReplyTo(post_id))
-    entry.link.append(atom.Link(href=self.Find(post, 'link'),
-                                rel='self',
-                                link_type=ATOM_TYPE))
-    return entry
 
   def TranslateContent(self, content):
     """Translates the content from Wordpress pseudo-HTML to HTML for Blogger.
@@ -509,11 +389,22 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
     """Converts a time struct to a Blogger time/date string."""
     return time.strftime('%Y-%m-%dT%H:%M:%SZ', time_tuple)
 
+  def _WordpressPubDateToTime(self, wp_date):
+    """Converts the text of a Wordpress time/date string to a time struct."""
+    return time.strptime(wp_date[:-6], '%a, %d %b %Y %H:%M:%S')
+
   def _WordpressDateToTime(self, wp_date):
     """Converts the text of a Wordpress time/date string to a time struct."""
     return time.strptime(wp_date, '%Y-%m-%d %H:%M:%S')
 
+
 if __name__ == '__main__':
+  if len(sys.argv) <= 1:
+    print 'Usage: %s <wordpress_export_file>' % os.path.basename(sys.argv[0])
+    print
+    print ' Outputs the converted Blogger export file to standard out.'
+    sys.exit(-1)
+    
   wp_xml_file = open(sys.argv[1])
   wp_xml_doc = wp_xml_file.read()
   translator = Wordpress2Blogger()
