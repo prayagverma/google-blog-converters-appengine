@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os.path
 import logging
 import re
 import sys
@@ -204,8 +205,14 @@ class Blogger2Wordpress(object):
     return matches.group(1)
 
 if __name__ == '__main__':
-    wp_xml_file = open(sys.argv[1])
-    wp_xml_doc = wp_xml_file.read()
-    translator = Blogger2Wordpress(wp_xml_doc)
-    print translator.Translate()
-    wp_xml_file.close()
+  if len(sys.argv) <= 1:
+    print 'Usage: %s <blogger_export_file>' % os.path.basename(sys.argv[0])
+    print
+    print ' Outputs the converted WordPress export file to standard out.'
+    sys.exit(-1)
+
+  wp_xml_file = open(sys.argv[1])
+  wp_xml_doc = wp_xml_file.read()
+  translator = Blogger2Wordpress(wp_xml_doc)
+  print translator.Translate()
+  wp_xml_file.close()
