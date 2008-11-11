@@ -8,6 +8,7 @@
 ::
 :: AUTHOR:   JJ Lueck (jlueck@gmail.com)
 
-set PYTHONPATH=%PYTHONPATH%;lib
-python src/blogger2wordpress/b2wp.py %1
+set BASEPATH=%~p0..
+set PYTHONPATH=%PYTHONPATH%;%BASEPATH%\lib
+python "%BASEPATH%\src\blogger2wordpress\b2wp.py" %1
 
