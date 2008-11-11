@@ -8,6 +8,7 @@
 ::
 :: AUTHOR:   JJ Lueck (jlueck@gmail.com)
 
+set BASEPATH=%~p0..
 set PORT=8080
 
 if "%1" == "-p" GOTO SETPORT
@@ -19,5 +20,5 @@ set PORT=%1
 SHIFT
 
 :RUNCMD
-set PYTHONPATH=%PYTHONPATH%;lib
-python lib\googleappengine\dev_appserver.py -p %PORT% src\%1
+set PYTHONPATH=%PYTHONPATH%;%BASEPATH%\lib
+python "%BASEPATH%\lib\googleappengine\dev_appserver.py" -p %PORT% "%BASEPATH%\src\%1"
