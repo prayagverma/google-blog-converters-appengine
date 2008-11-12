@@ -30,7 +30,6 @@ DC_NS_TAG = 'dc'
 DC_NS = 'http://purl.org/dc/elements/1.1/'
 WORDPRESS_NS_TAG = 'wp'
 WORDPRESS_NS = 'http://wordpress.org/export/1.0/'
-BLOGGER_NS = 'http://www.blogger.com/atom/ns#'
 XML_HEADER = '<?xml version="1.0" encoding="UTF-8"?>'
 
 ###########################
