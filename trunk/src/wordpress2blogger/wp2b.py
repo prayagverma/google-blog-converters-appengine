@@ -71,6 +71,22 @@ NORMALIZE_BREAKS_RE = re.compile('(<br\s*/?>\r?|\r|)\n')
 # Helper Atom class
 ###########################
 
+class BloggerGDataFeed(gdata.GDataFeed):
+
+  def _ToElementTree(self):
+    tree = gdata.GDataFeed._ToElementTree(self)
+    # Modify the tree such that entries are always the last elements
+    # of the top-level feed.  This conforms to the Atom specification
+    # and fixes a bug where the Blog title may exist after the entries
+    # which causes Blogger to ignore the title.
+    for i in reversed(range(len(tree))):
+      if tree[i].tag.endswith('entry'):
+        break
+      subelem = tree[i]
+      tree.remove(subelem)
+      tree.insert(0, subelem)
+    return tree
+
 
 class InReplyTo(atom.ExtensionElement):
   """Supplies the in-reply-to element from the Atom threading protocol."""
@@ -107,7 +123,7 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
       A Blogger export Atom document as a string, or None on error.
     """
     # Create the top-level feed object
-    self.feed = gdata.GDataFeed()
+    self.feed = BloggerGDataFeed()
     self.feed.generator = atom.Generator(text='Blogger')
     self.elem_stack = []
     self.contents = ''
@@ -283,6 +299,8 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
       content = self.TranslateContent(content)
       if content:
         self.comments[0].content = atom.Content('html', text=content)
+        self.comments[0].title = atom.Title(
+            'text', text=self._CreateSnippet(content))
 
   def endComment_Date(self, content):
     if (self.comments and not self.comments[0].published and
@@ -366,6 +384,15 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
     if not result:
       return ''
     return result.string
+
+  def _CreateSnippet(self, content):
+    """Creates a snippet of content.  The maximum size being 53 characters,
+    50 characters of data followed by elipses.
+    """
+    content = re.sub('</?[^>/]+/?>', '', content)
+    if len(content) < 50:
+      return content
+    return content[0:49] + '...'
 
   def _GetPublishTime(self, element, time_child_list):
     """Helper method that searches multiple elements for a date/time string.
