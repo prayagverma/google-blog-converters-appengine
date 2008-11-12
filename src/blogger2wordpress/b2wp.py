@@ -34,6 +34,9 @@ __author__ = 'JJ Lueck (jlueck@gmail.com)'
 # Constants
 ###########################
 
+BLOGGER_NS = 'http://www.blogger.com/atom/ns#'
+KIND_SCHEME = 'http://schemas.google.com/g/2005#kind'
+
 YOUTUBE_RE = re.compile('http://www.youtube.com/v/([^&]+)&?.*')
 YOUTUBE_FMT = r'[youtube=http://www.youtube.com/watch?v=\1]'
 GOOGLEVIDEO_RE = re.compile('(http://video.google.com/googleplayer.swf.*)')
@@ -63,6 +66,7 @@ class Blogger2Wordpress(object):
 
     # Read the incoming document as a GData Atom feed.
     self.feed = atom.FeedFromString(self.doc)
+    self.next_id = 1
 
   def Translate(self):
     """Performs the actual translation to WordPress WXR export format.
@@ -79,8 +83,16 @@ class Blogger2Wordpress(object):
         pubDate = self._ConvertPubDate(self.feed.updated.text))
 
     posts_map = {}
+    
     for entry in self.feed.entry:
-      if entry.FindExtensions('in-reply-to'):
+
+      # Grab the information about the entry kind
+      entry_kind = ""
+      for category in entry.category:
+        if category.scheme == KIND_SCHEME:
+          entry_kind = category.term
+
+      if entry_kind.endswith("#comment"):
         # This entry will be a comment, grab the post that it goes to
         post_id = self._ParsePostId(
             entry.FindExtensions('in-reply-to')[0].attributes['ref'])
@@ -97,16 +109,17 @@ class Blogger2Wordpress(object):
             author_url = entry.author[0].uri.text
 
           post_item.comments.append(wordpress.Comment(
-              comment_id = self._ParseCommentId(entry.id.text),
+              comment_id = self._GetNextId(),
               author = entry.author[0].name.text,
               author_email = author_email,
               author_url = author_url,
               date = self._ConvertDate(entry.published.text),
               content = self._ConvertContent(entry.content.text)))
-      else:
+
+      elif entry_kind.endswith("#post"):
         # This entry will be a post
         post_item = self._ConvertPostEntry(entry)
-        posts_map[post_item.post_id] = post_item
+        posts_map[self._ParsePostId(entry.id.text)] = post_item
         wxr.channel.items.append(post_item)
     return wxr.WriteXml()
 
@@ -130,13 +143,13 @@ class Blogger2Wordpress(object):
         pubDate = self._ConvertPubDate(entry.published.text),
         creator = entry.author[0].name.text,
         content = self._ConvertContent(entry.content.text),
-        post_id = self._ParsePostId(entry.id.text),
+        post_id = self._GetNextId(),
         post_date = self._ConvertDate(entry.published.text),
         status = status)
 
     # Convert the categories which specify labels into wordpress labels
     for category in entry.category:
-      if category.scheme == wordpress.BLOGGER_NS:
+      if category.scheme == BLOGGER_NS:
         post_item.labels.append(category.term)
 
     return post_item
@@ -192,15 +205,15 @@ class Blogger2Wordpress(object):
     date_tuple = iso8601.parse_date(date)
     return date_tuple.strftime('%Y-%m-%d %H:%M:%S')
 
+  def _GetNextId(self):
+    """Returns the next identifier to use in the export document as a string."""
+    next_id = self.next_id;
+    self.next_id += 1
+    return str(next_id)
+
   def _ParsePostId(self, text):
     """Extracts the post identifier from a Blogger entry ID."""
     matcher = re.compile('post-(\d+)')
-    matches = matcher.search(text)
-    return matches.group(1)
-
-  def _ParseCommentId(self, text):
-    """Extracts the comment identifier from a Blogger entry ID."""
-    matcher = re.compile('comment-(\d+)')
     matches = matcher.search(text)
     return matches.group(1)
 
