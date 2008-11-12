@@ -286,7 +286,7 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
       self.comments[0].author.append(atom.Author(atom.Name(text=content)))
 
   def endComment_Author_Email(self, content):
-    if self.comments and self.comments[0].author:
+    if self.comments and self.comments[0].author and content:
       self.comments[0].author[0].email = atom.Email(text=content)
 
   def endComment_Author_Url(self, content):
