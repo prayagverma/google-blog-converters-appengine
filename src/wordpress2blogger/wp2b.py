@@ -127,13 +127,19 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
   ###################################
 
   def startElement(self, name, attrs):
-    self.elem_stack.insert(0, name)
+    self.elem_stack.insert(0, name)    
     handler = getattr(self, 'start%s' % name.split(':')[-1].title(), None)
     if handler:
       handler()
 
   def endElement(self, name):
     self.elem_stack.pop(0)
+
+    # This is a bit of a hack, but there are two elements with the name "encoded".
+    # The element with the ns of "excerpt" should be ignored (it also isn't valid
+    # XML since it's namespace is not defined.
+    if (name.split(':')[0] == 'excerpt'):
+      return
 
     handler = getattr(self, 'end%s' % name.split(':')[-1].title(), None)
     if handler:
