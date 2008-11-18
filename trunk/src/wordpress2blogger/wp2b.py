@@ -19,6 +19,7 @@ import logging
 import re
 import sys
 import time
+import urlparse
 import xml.sax
 
 import gdata
@@ -64,6 +65,9 @@ EMBED_DAILYMOTION_FMT = \
       <param name="allowfullscreen" value="true">
       <embed src="http://www.dailymotion.com/swf/\1" type="application/x-shockwave-flash" allowfullscreen="true" height="334" width="425">
       </object>"""
+
+RELATIVE_IMAGE_RE = re.compile('''<img[^>]+src=["']?(/[^"']+)["']?[^>]*>''',
+                               re.IGNORECASE|re.MULTILINE)
 
 NORMALIZE_BREAKS_RE = re.compile('(<br\s*/?>\r?|\r|)\n')
 
@@ -228,11 +232,13 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
 
   def endCreator(self, content):
     if self.current_post:
+      if not content:
+        content = 'Anonymous'
       self.current_post.author.append(atom.Author(atom.Name(text=content)))
 
   def endCategory(self, content):
     # Skip over the default uncategorized category
-    if content != 'Uncategorized':
+    if content != 'Uncategorized' and content != '':
       self.categories.add(content)
 
   def endPost_Type(self, content):
@@ -276,6 +282,10 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
     # Make a link to the comment, which actually points to the original post
     self.comments[0].link.append(self.current_post.link[0])
 
+  def endComment(self, _):
+    if not self.comments[0].title:
+      del self.comments[0]
+
   def endComment_Id(self, content):
     if self.comments:
       post_id = self.current_post.id.text
@@ -283,6 +293,8 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
 
   def endComment_Author(self, content):
     if self.comments:
+      if not content:
+        content = 'Anonymous'
       self.comments[0].author.append(atom.Author(atom.Name(text=content)))
 
   def endComment_Author_Email(self, content):
@@ -330,6 +342,14 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
     if not content:
       return ''
 
+    # If any relative image links are found, connect it up with the hostname
+    # for the current post to keep all image links absolute
+    for relative_url in RELATIVE_IMAGE_RE.findall(content):
+      url_parts = urlparse.urlparse(self.current_post.link[0].href)
+      absolute_url = ('%s://%s%s' %
+                      (url_parts.scheme, url_parts.netloc, relative_url))
+      content = content.replace(relative_url, absolute_url)
+
     # This is a bit of a mystery, but sometime the wordpress export is littered
     # with these two unicode characters that are supposed to be whitespace.
     # This removes them (until a known reason for their appearance is uncovered).
@@ -342,6 +362,7 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
     content = WP_DAILYMOTION_RE.subn(EMBED_DAILYMOTION_FMT, content)[0]
     # Then change newlines not preceeded by a <br/> tag to a <br/> tag.
     content = NORMALIZE_BREAKS_RE.subn('<br/>', content)[0]
+
     return content
 
   def GetPostPublishedDate(self, post):
