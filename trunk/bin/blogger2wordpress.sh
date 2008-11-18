@@ -1,8 +1,8 @@
 #!/bin/sh
 
 # FILE:     blogger2wordpress.sh
-# PURPOSE:  Shell script for executing the command-line use of the Wordpress
-#           to Blogger conversion
+# PURPOSE:  Shell script for executing the command-line use of the Blogger to
+#           to WordPress conversion
 # REQUIRES: Python installed and executable in the PATH list
 #
 # USAGE:    blogger2wordperss.sh <blogger_export_file>
