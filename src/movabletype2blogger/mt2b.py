@@ -137,6 +137,8 @@ class MovableType2Blogger(object):
           post_entry.content = atom.Content(
               content_type='html', text=self._Encode(tag_contents))
 
+        # This is the start of the COMMENT section.  Create a new entry for
+        # the comment and add a link to the original post.
         elif tag_name == 'COMMENT':
           comment_entry.content = atom.Content(
               content_type='html', text=tag_contents)
