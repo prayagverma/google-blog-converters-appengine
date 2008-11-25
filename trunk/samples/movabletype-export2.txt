@@ -24,7 +24,7 @@ KEYWORDS:
 keyword, post
 -----
 
-COMMENT:
+COMMENT: 
 AUTHOR: JumpBox Admin User
 EMAIL: jlueck@google.com
 IP: 172.31.47.193
