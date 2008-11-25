@@ -120,14 +120,15 @@ class MovableType2Blogger(object):
 
       # Check for the post ending token
       if line == '-' * 8:
-        # Add the post to our feed
-        feed.entry.insert(0, post_entry)
+        if post_entry:
+          # Add the post to our feed
+          feed.entry.insert(0, post_entry)
 
         # Reset the state variables
         post_entry = None
         comment_entry = None
         tag_name = None
-        tag_contents = None
+        tag_contents = ''
         continue
 
       # Check for the tag ending separator
@@ -135,14 +136,15 @@ class MovableType2Blogger(object):
         # Get the contents of the body and set the entry contents
         if tag_name == 'BODY':
           post_entry.content = atom.Content(
-              content_type='html', text=self._Encode(tag_contents))
+              content_type='html', text=self._TranslateContents(tag_contents))
 
         # This is the start of the COMMENT section.  Create a new entry for
         # the comment and add a link to the original post.
         elif tag_name == 'COMMENT':
           comment_entry.content = atom.Content(
-              content_type='html', text=tag_contents)
-          comment_entry.title = atom.Title(text=self._CreateSnippet(tag_contents))
+              content_type='html', text=self._TranslateContents(tag_contents))
+          comment_entry.title = atom.Title(
+            text=self._Encode(self._CreateSnippet(tag_contents)))
           comment_entry.extension_elements.append(InReplyTo(post_entry.id.text))
           feed.entry.append(comment_entry)
           comment_entry = None
@@ -150,7 +152,7 @@ class MovableType2Blogger(object):
         # Get the contents of the extended body and append it to the
         # entry contents
         elif tag_name == 'EXTENDED BODY':
-          post_entry.content.text += '<br/>' + tag_contents
+          post_entry.content.text += '<br/>' + self._TranslateContents(tag_contents)
 
         # Convert any keywords (comma separated values) into Blogger labels
         elif tag_name == 'KEYWORDS':
@@ -183,7 +185,10 @@ class MovableType2Blogger(object):
             atom.Link(href=DUMMY_URI, rel='alternate', link_type=HTML_TYPE))
         entry.id = atom.Id('post-' + self._GetNextId())
         # Add the author's name
-        entry.author = atom.Author(atom.Name(text=value))
+        author_name = self._Encode(value)
+        if not author_name:
+          author_name = 'Anonymous'
+        entry.author = atom.Author(atom.Name(text=author_name))
 
         # Add the appropriate kind, either a post or a comment
         if tag_name == 'COMMENT':
@@ -197,7 +202,7 @@ class MovableType2Blogger(object):
 
       # The title only applies to new posts
       elif key == 'TITLE':
-        post_entry.title = atom.Title(text=value)
+        post_entry.title = atom.Title(text=self._Encode(value))
 
       # If the status is a draft, mark it as so in the entry.  If the status
       # is 'Published' there's nothing to do here
@@ -233,16 +238,16 @@ class MovableType2Blogger(object):
                 atom.Category(scheme=CATEGORY_NS, term=keyword))
 
       # Update the author's email if it is present and not empty
-      elif key == 'EMAIL' and len(value) > 0:
+      elif tag_name == 'COMMENT' and key == 'EMAIL' and len(value) > 0:
         comment_entry.author.email = atom.Email(text=value)
 
       # Update the author's URI if it is present and not empty
-      elif key == 'URL' and len(value) > 0:
+      elif tag_name == 'COMMENT' and key == 'URL' and len(value) > 0:
         comment_entry.author.uri = atom.Uri(text=value)
 
       # If any of these keys are used, they contain information beyond this key
       # on following lines
-      elif key in ('COMMENT', 'BODY', 'EXTENDED BODY', 'EXCERPT', 'KEYWORDS'):
+      elif key in ('COMMENT', 'BODY', 'EXTENDED BODY', 'EXCERPT', 'KEYWORDS', 'PING'):
         tag_name = key
 
       # These lines can be safely ignored
@@ -252,7 +257,7 @@ class MovableType2Blogger(object):
 
       # This would be a line of content beyond a key/value pair
       elif len(key) != 0:
-        tag_contents += line
+        tag_contents += line + '\n'
 
     # Update the feed with the last updated time
     feed.updated = atom.Updated(self._ToBlogTime(time.gmtime(last_updated)))
@@ -274,6 +279,10 @@ class MovableType2Blogger(object):
     if len(content) < 50:
       return content
     return content[0:49] + '...'
+
+  def _TranslateContents(self, content):
+    content = content.replace('\n', '<br/>')
+    return self._Encode(content)
 
   def _Encode(self, content):
     return unicode(content, errors='ignore')
