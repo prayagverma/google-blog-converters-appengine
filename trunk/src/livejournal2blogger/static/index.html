@@ -2,6 +2,11 @@
   <head>
     <title>Livejournal2Blogger conversion utility</title>
   </head>
+
+  <style type="text/css">
+
+  </style>
+
   <body>
 
     <div style="text-align:center">
@@ -11,16 +16,25 @@
         <ol>
           <li>Login to LiveJournal with the following form:
             <p>
-              <form method="post" action="/lj2b/">
-                LiveJournal Username: <input type="text" name="username" size="30" /><br/>
-                LiveJournal Password: <input type="password" name="password" size="30"/><br/>
-                <input type="submit" value="Login" class="button"/>
+              <form style="background-color: #cfe7ff; padding: 5px;" method="post" action="/lj2b/">
+                <table cellpadding="2" cellspacing="2" align="center">
+                  <tr>
+                    <th><label for="login_user">LiveJournal Username:</label></th>
+                    <td><input name="username" size="24" id="login_user" tabindex="1" type="text"></td>
+                  </tr>
+                  <tr>
+                    <th><label for="login_password">LiveJournal Password:</label></th>
+                    <td style="white-space: nowrap;"><input name="password" size="15" tabindex="2" type="password">
+                      <input value="Login" tabindex="3" type="submit">
+                    </td>
+                  </tr>
+                </table>
               </form>
             </p>
           </li>
-          <li>Save this file to your local machine.  This file will be
-              the contents of your posts/comments from WordPress in a Blogger 
-              export file.</li>
+          <li>The browser will prompt you to save a file to your local machine.
+              This file will be the contents of your posts/comments from
+              LiveJournal in a Blogger export file.</li>
           <li>Login to your <a href="http://draft.blogger.com">Blogger</a> 
               or create a new user.</li>
           <li>Once logged in, click on the <b>Create a Blog</b> link from the
@@ -28,7 +42,7 @@
           <li>Follow the instructions and upload your Blogger export file when 
               prompted.</li>
           <li>After completing the import wizard, you should have a set of
-              imported posts from WordPress that you can now publish to
+              imported posts from LiveJournal that you can now publish to
               Blogger.  Have fun!</li>
         </ol>
       </td></tr></table>
