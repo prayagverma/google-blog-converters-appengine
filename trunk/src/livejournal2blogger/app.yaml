@@ -1,0 +1,17 @@
+application: livejournal2blogger
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+- url: /lj2b/.*
+  script: livejournal2blogger.py
+
+- url: /
+  static_files: static/index.html
+  upload: static/.*
+
+- url: /(.*\.(png|html))
+  static_files: static/\1
+  upload: static/(.*\.(png|html))
+
