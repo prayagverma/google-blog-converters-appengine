@@ -16,6 +16,7 @@
 
 import getopt
 import md5
+import os
 import os.path
 import re
 import sys
@@ -26,6 +27,13 @@ import xml.dom.minidom
 
 import gdata
 from gdata import atom
+try:
+  import gaexmlrpclib
+  from google.appengine.api import urlfetch
+  ON_GAE = True
+except ImportError:
+  ON_GAE = False
+
 
 __author__ = 'JJ Lueck (jlueck@google.com)'
 
@@ -41,6 +49,7 @@ ATOM_TYPE = 'application/atom+xml'
 HTML_TYPE = 'text/html'
 ATOM_THREADING_NS = 'http://purl.org/syndication/thread/1.0'
 DUMMY_URI = 'http://www.blogger.com/'
+
 
 ###########################
 # Helper Atom class
@@ -95,16 +104,16 @@ class UserMap(object):
 
   def GetLargestId(self):
     return self.max_id
-  
+
   def _ReadMap(self, xml_map):
     # One half of the XML document contains a map between user ID and
     # the user's name.  Build a user_map with this mapping
     users = xml_map.getElementsByTagName('usermap')
-    user_map = dict([(user.getAttribute('id'), 
+    user_map = dict([(user.getAttribute('id'),
                       user.getAttribute('user')) for user in users])
 
-    # The other half of the XML document contains a map between the 
-    # comment ID and 
+    # The other half of the XML document contains a map between the
+    # comment ID and comment authors
     comments = xml_map.getElementsByTagName('comment')
     for comment in comments:
       comment_id = comment.getAttribute('id')
@@ -114,6 +123,39 @@ class UserMap(object):
       else:
         self.comment2user[comment_id] = 'Anonymous'
       self.max_id = max(int(comment_id), self.max_id)
+
+
+###########################
+# Helper URL fetching
+###########################
+
+class UrlFetcherFactory(object):
+
+  def newUrlFetcher(self):
+    if ON_GAE:
+      return GaeUrlFetcher()
+    else:
+      return NativeUrlFetcher()
+
+  def fetch(url, payload, headers={}):
+    pass
+
+
+class GaeUrlFetcher():
+
+  def fetch(self, url, payload, headers={}):
+    response = urlfetch.fetch(url, payload, 'POST', headers)
+    return response.content
+
+
+class NativeUrlFetcher(object):
+
+  def fetch(self, url, payload, headers={}):
+    response = urllib2.urlopen(urllib2.Request(url, payload, headers=headers))
+    data = response.read()
+    response.close()
+    return data
+
 
 ###########################
 # Translation class
@@ -128,8 +170,13 @@ class LiveJournal2Blogger(object):
     self.username = username
     self.password = password
     self.server_name = server
-    self.server = xmlrpclib.ServerProxy('http://%s/interface/xmlrpc' % server)
-        
+    if ON_GAE:
+      self.server = xmlrpclib.ServerProxy('http://%s/interface/xmlrpc' % server,
+                                          gaexmlrpclib.GAEXMLRPCTransport())
+    else:
+      self.server = xmlrpclib.ServerProxy('http://%s/interface/xmlrpc' % server)
+    self.url_fetcher = UrlFetcherFactory().newUrlFetcher()
+
   def Translate(self, outfile):
     """Performs the actual translation to a Blogger export format.
 
@@ -146,7 +193,7 @@ class LiveJournal2Blogger(object):
         atom.Link(href=DUMMY_URI, rel='self', link_type=ATOM_TYPE))
     feed.link.append(
         atom.Link(href=DUMMY_URI, rel='alternate', link_type=HTML_TYPE))
-      
+
     # Grab the list of posts
     posts = self._GetPosts()
     feed.entry.extend(posts)
@@ -154,7 +201,7 @@ class LiveJournal2Blogger(object):
     # Grab the list of comments
     comments = self._GetComments()
     feed.entry.extend(comments)
-    
+
     # Serialize the feed object
     outfile.write(str(feed))
 
@@ -210,12 +257,12 @@ class LiveJournal2Blogger(object):
         text=self._ToBlogTime(self._FromLjTime(lj_event['eventtime'])))
     post_entry.updated = atom.Updated(
         text=self._ToBlogTime(self._FromLjTime(lj_event['eventtime'])))
-    
+
     subject = lj_event.get('subject', None)
     if not subject:
       subject = self._CreateSnippet(lj_event['event'])
     post_entry.title = atom.Title(text=subject)
-        
+
     # Turn the taglist into individual labels
     taglist = lj_event['props'].get('taglist', None)
     if taglist:
@@ -234,17 +281,15 @@ class LiveJournal2Blogger(object):
     # First make requests to generate the user map.  This is gathered by requesting for
     # comment metadata and paging through the responses.  For each request for a page of
     # comment metadata, add the results to a running UserMap which provides the mapping
-    # from comment identifier to the author's name. 
+    # from comment identifier to the author's name.
     while True:
       session_key = self._GetSessionToken()
-      request_url = ('http://%s/export_comments.bml?get=comment_meta&startid=%d' 
+      request_url = ('http://%s/export_comments.bml?get=comment_meta&startid=%d'
                      % (self.server_name, current_id))
-      response = urllib2.urlopen(
-          urllib2.Request(request_url, 
-                          headers={'Cookie': 'ljsession=%s' % session_key}))
-      response_doc = xml.dom.minidom.parseString(response.read()) 
+      response = self.url_fetcher.fetch(
+          request_url, None, headers={'Cookie': 'ljsession=%s' % session_key})
+      response_doc = xml.dom.minidom.parseString(response)
       user_map.Add(response_doc)
-      response.close()
 
       current_id = user_map.GetLargestId()
       max_id = int(self._GetText(response_doc.getElementsByTagName('maxid')[0]))
@@ -257,18 +302,16 @@ class LiveJournal2Blogger(object):
     current_id = 0
     while True:
       session_key = self._GetSessionToken()
-      request_url = ('http://%s/export_comments.bml?get=comment_body&startid=%d' 
+      request_url = ('http://%s/export_comments.bml?get=comment_body&startid=%d'
                      % (self.server_name, current_id))
-      response = urllib2.urlopen(
-          urllib2.Request(request_url, 
-                          headers={'Cookie': 'ljsession=%s' % session_key}))
-      response_doc = xml.dom.minidom.parseString(response.read()) 
-      response.close()
+      response = self.url_fetcher.fetch(
+          request_url, None, headers={'Cookie': 'ljsession=%s' % session_key})
+      response_doc = xml.dom.minidom.parseString(response)
 
       for comment in response_doc.getElementsByTagName('comment'):
         comments.append(self._TranslateComment(comment, user_map))
         current_id = int(comment.getAttribute('id'))
-        
+
       if current_id >= max_id:
         break
 
@@ -296,7 +339,7 @@ class LiveJournal2Blogger(object):
         text=self._GetText(xml_comment.getElementsByTagName('date')[0]))
     comment_entry.updated = atom.Updated(
         text=self._GetText(xml_comment.getElementsByTagName('date')[0]))
-    
+
     subject = self._GetText(xml_comment.getElementsByTagName('subject')[0])
     if not subject:
       subject = self._CreateSnippet(comment_body)
@@ -304,15 +347,15 @@ class LiveJournal2Blogger(object):
 
     comment_entry.extension_elements.append(
         InReplyTo('post-%s' % xml_comment.getAttribute('jitemid')))
-        
+
     return comment_entry
 
   def _TranslateContent(self, content):
     return content.replace('\r\n', '<br/>')
 
   def _GetAuthTokens(self):
-    """Returns the information necessary to create new requests to the 
-    LiveJournal server using XML-RPC.  Returns a tuple containing the challege, 
+    """Returns the information necessary to create new requests to the
+    LiveJournal server using XML-RPC.  Returns a tuple containing the challege,
     and the successful response to the challenge.
     """
     response = self.server.LJ.XMLRPC.getchallenge()
@@ -320,36 +363,33 @@ class LiveJournal2Blogger(object):
     return challenge, self._HashChallenge(challenge)
 
   def _GetSessionToken(self):
-    """Returns the information necessary to create new requests to the 
-    LiveJournal server via HTTP.  
+    """Returns the information necessary to create new requests to the
+    LiveJournal server via HTTP.
     """
     # Use the flat RPC protocol to generate the session information
     request_url = 'http://%s/interface/flat' % self.server_name
 
     # The first request is used to obtain the challenge token
-    response = urllib2.urlopen(request_url, 'mode=getchallenge')
+    response = self.url_fetcher.fetch(request_url, 'mode=getchallenge')
     challenge = self._ResponseToDict(response)['challenge']
-    response.close()
 
-    # The second request is to actually generate the session cookie by 
+    # The second request is to actually generate the session cookie by
     # responding to the challenge
     challenge_response = self._HashChallenge(challenge)
-    response = urllib2.urlopen(
+    response = self.url_fetcher.fetch(
         request_url, ('mode=sessiongenerate&auth_method=challenge&'
                       'user=%s&auth_challenge=%s&auth_response=%s' %
                       (self.username, challenge, challenge_response)))
     result = self._ResponseToDict(response)
-    response.close()
 
     if result.get('errmsg', None):
       raise 'Login Unsuccessful'
     return result['ljsession']
 
-  def _ResponseToDict(self, response):
+  def _ResponseToDict(self, contents):
     """Takes the result of a request to the LiveJournal flat XML-RPC
     protocol and transforms the key/value pairs into a dictionary.
     """
-    contents = response.read()
     elems = contents.split('\n')
     # This little bit of Python wizardry turns a list of elements into
     # key value pairs.
@@ -373,7 +413,7 @@ class LiveJournal2Blogger(object):
   def _GetText(self, xml_elem):
     """Assumes the text for the element is the only child of the element."""
     return xml_elem.firstChild.nodeValue
-    
+
   def _FromLjTime(self, lj_time):
     """Converts the LiveJournal event time to a time/date struct."""
     return time.strptime(lj_time, '%Y-%m-%d %H:%M:%S')
@@ -419,6 +459,3 @@ if __name__ == '__main__':
   # Perform the translation
   translator = LiveJournal2Blogger(username, password, server)
   translator.Translate(sys.stdout)
-
-
-    
