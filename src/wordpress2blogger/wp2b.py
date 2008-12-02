@@ -25,7 +25,7 @@ import xml.sax
 import gdata
 from gdata import atom
 
-__author__ = 'JJ Lueck (jlueck@google.com)'
+__author__ = 'JJ Lueck (jlueck@gmail.com)'
 
 ########################
 # Constants

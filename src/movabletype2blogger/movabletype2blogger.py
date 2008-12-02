@@ -22,7 +22,7 @@ import traceback
 import mt2b
 import wsgiref.handlers
 
-__author__ = 'JJ Lueck (jlueck@google.com)'
+__author__ = 'JJ Lueck (jlueck@gmail.com)'
 
 # Use urlfetch instead of httplib
 gdata.service.http_request_handler = gdata.urlfetch
