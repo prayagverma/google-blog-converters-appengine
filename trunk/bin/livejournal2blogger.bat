@@ -10,5 +10,5 @@
 
 set BASEPATH=%~p0..
 set PYTHONPATH=%PYTHONPATH%;%BASEPATH%\lib
-python "%BASEPATH%\src\moveabletype2blogger\mt2b.py" %1
+python "%BASEPATH%\src\livejournal2blogger\lj2b.py" %1 %2 %3 %4 %5 %6
 
