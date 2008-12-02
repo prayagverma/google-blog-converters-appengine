@@ -55,7 +55,28 @@ class TestWordpress2Blogger(unittest.TestCase):
       self.translator.Translate(input_file.read(), output_file)
       output_dom = xml.dom.minidom.parseString(output_file.getvalue())
       self.assertDocumentsEqual(expected_file.read(),
-                                output_dom.toprettyxml(encoding="utf-8"))
+                                output_dom.toprettyxml(encoding="UTF-8"))
+
+
+
+def generateGoldenfiles():
+  testDir = os.path.join(os.path.dirname(os.path.abspath(wp2b.__file__)),
+                           'testdata')
+  input_files = glob.glob('%s/wordpress.*.xml' % testDir)
+  golden_files = glob.glob('%s/blogger.goldenfile.*.xml' % testDir)
+  for i in xrange(len(golden_files)):
+    print input_files[1]
+    input_file = open(input_files[i])
+    output_file = open(golden_files[i], "w")
+
+    translator = wp2b.Wordpress2Blogger()
+    translator.Translate(input_file.read(), output_file)
+    output_file.close()
 
 if __name__ == '__main__':
-  unittest.main()
+  import sys
+  
+  if len(sys.argv) > 1 and sys.argv[1] == '--generate':
+    generateGoldenfiles()
+  else:
+    unittest.main()

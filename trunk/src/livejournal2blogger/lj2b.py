@@ -35,7 +35,7 @@ except ImportError:
   ON_GAE = False
 
 
-__author__ = 'JJ Lueck (jlueck@google.com)'
+__author__ = 'JJ Lueck (jlueck@gmail.com)'
 
 ########################
 # Constants
