@@ -158,7 +158,7 @@ class Blogger2MovableType(object):
   def _ConvertDate(self, date):
     """Translates to a wordpress date element's time/date format."""
     date_tuple = iso8601.parse_date(date)
-    return date_tuple.strftime('%m/%d/%Y %I:%M:%S %P')
+    return date_tuple.strftime('%m/%d/%Y %I:%M:%S %p')
 
   def _GetNextId(self):
     """Returns the next identifier to use in the export document as a string."""
