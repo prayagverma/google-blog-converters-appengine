@@ -108,7 +108,7 @@ Next up, video and embedded links which Wordpress outputs in a non-HTML format.]
 <wp:comment>
 <wp:comment_id>8</wp:comment_id>
 <wp:comment_author><![CDATA[jlueck]]></wp:comment_author>
-<wp:comment_author_email>jlueck@google.com</wp:comment_author_email>
+<wp:comment_author_email>jlueck@gmail.com</wp:comment_author_email>
 <wp:comment_author_url></wp:comment_author_url>
 <wp:comment_author_IP>72.14.229.1</wp:comment_author_IP>
 <wp:comment_date>2008-05-16 20:24:37</wp:comment_date>
@@ -240,7 +240,7 @@ Let me see how it goes if I embed a YouTube, Google Video, and DailyMotion video
 <wp:comment>
 <wp:comment_id>9</wp:comment_id>
 <wp:comment_author><![CDATA[jlueck]]></wp:comment_author>
-<wp:comment_author_email>jlueck@google.com</wp:comment_author_email>
+<wp:comment_author_email>jlueck@gmail.com</wp:comment_author_email>
 <wp:comment_author_url></wp:comment_author_url>
 <wp:comment_author_IP>72.14.229.1</wp:comment_author_IP>
 <wp:comment_date>2008-05-16 22:49:10</wp:comment_date>
