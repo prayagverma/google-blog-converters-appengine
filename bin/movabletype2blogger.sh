@@ -5,7 +5,7 @@
 #           to Blogger conversion
 # REQUIRES: Python installed and executable in the PATH list
 #
-# USAGE:    movabletype2blogger.sh <wordpress_export_file>
+# USAGE:    movabletype2blogger.sh <movabletype_export_file>
 #
 # AUTHOR:   JJ Lueck (jlueck@gmail.com)
 
