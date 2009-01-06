@@ -1,4 +1,4 @@
-Welcome to GConverters.
+Welcome to Blog Converters.
 
 This project contains a number of converters to and from differnt Blog services.
 The code is written in Python with scripts to execute the conversions either on
