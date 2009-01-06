@@ -1,10 +1,10 @@
 Welcome to Blog Converters.
 
-This project contains a number of converters to and from differnt Blog services.
-The code is written in Python with scripts to execute the conversions either on
-the command-line scripts or hosted on Google App Engine.  This project is open
-source and distributed under the Apache license.  Please feel free to add to or
-modify this source and propose changes or new converters.
+This project contains a number of converters to and from different Blog
+services.  The code is written in Python with scripts to execute the
+conversionseither on the command-line scripts or hosted on Google App Engine.
+This projectis open source and distributed under the Apache license.  Please
+feel free to add to or modify this source and propose changes or new converters.
 
 This project makes extensive use of the Google GData API.  For notes on
 installing python that is suitable for this API, see:
