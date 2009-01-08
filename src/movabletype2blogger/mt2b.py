@@ -110,11 +110,13 @@ class MovableType2Blogger(object):
     # These three variables keep the state as we parse the file
     post_entry = None    # The current post atom.Entry to populate
     comment_entry = None # The current comment atom.Entry to populate
+    last_entry = None    # The previous post atom.Entry if exists
     tag_name = None      # The current name of multi-line values
     tag_contents = ''    # The contents of multi-line values
 
     # Loop through the text lines looking for key/value pairs
     for line in infile:
+
       # Remove whitespace
       line = line.strip()
 
@@ -123,6 +125,7 @@ class MovableType2Blogger(object):
         if post_entry:
           # Add the post to our feed
           feed.entry.insert(0, post_entry)
+          last_entry = post_entry
 
         # Reset the state variables
         post_entry = None
@@ -152,7 +155,10 @@ class MovableType2Blogger(object):
         # Get the contents of the extended body and append it to the
         # entry contents
         elif tag_name == 'EXTENDED BODY':
-          post_entry.content.text += '<br/>' + self._TranslateContents(tag_contents)
+          if post_entry:
+            post_entry.content.text += '<br/>' + self._TranslateContents(tag_contents)
+          elif last_entry and last_entry.content:
+            last_entry.content.text += '<br/>' + self._TranslateContents(tag_contents)
 
         # Convert any keywords (comma separated values) into Blogger labels
         elif tag_name == 'KEYWORDS':
