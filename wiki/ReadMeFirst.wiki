@@ -5,7 +5,7 @@
 
 Welcome to Google Blog Converters.
 
-For details on installing and running the Python scripts, see the [http://code.google.com/p/google-blog-converters-appengine/source/browse/trunk/README.txt README] file.
+For details on installing and running the Python scripts, see the [http://google-blog-converters-appengine.googlecode.com/svn/trunk/README.txt README] file.
 
 = Details =
 
