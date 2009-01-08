@@ -121,7 +121,7 @@ class MovableType2Blogger(object):
       line = line.strip()
 
       # Check for the post ending token
-      if line == '-' * 8:
+      if line == '-' * 8 and tag_name != 'BODY':
         if post_entry:
           # Add the post to our feed
           feed.entry.insert(0, post_entry)
@@ -207,7 +207,7 @@ class MovableType2Blogger(object):
           post_entry = entry
 
       # The title only applies to new posts
-      elif key == 'TITLE':
+      elif key == 'TITLE' and tag_name != 'PING':
         post_entry.title = atom.Title(text=self._Encode(value))
 
       # If the status is a draft, mark it as so in the entry.  If the status
@@ -223,7 +223,7 @@ class MovableType2Blogger(object):
               atom.Category(scheme=CATEGORY_NS, term=value))
 
       # Convert the date and specify it as the published/updated time
-      elif key == 'DATE':
+      elif key == 'DATE' and tag_name != 'PING':
         time_val = self._FromMtTime(value)
         entry = post_entry
         if tag_name == 'COMMENT':
@@ -261,9 +261,15 @@ class MovableType2Blogger(object):
                    'ALLOW PINGS', 'PRIMARY CATEGORY', 'IP', 'URL', 'EMAIL'):
         continue
 
+      # If the line is empty and we're processing the body, add an HTML line
+      # break
+      elif tag_name == 'BODY' and len(line) == 0:
+        tag_contents += '<br/>'
+
       # This would be a line of content beyond a key/value pair
       elif len(key) != 0:
         tag_contents += line + '\n'
+
 
     # Update the feed with the last updated time
     feed.updated = atom.Updated(self._ToBlogTime(time.gmtime(last_updated)))

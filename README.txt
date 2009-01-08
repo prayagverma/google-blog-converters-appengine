@@ -61,10 +61,8 @@ directory.
 See:
 
   http://blogger2wordpress.appspot.com/
-
-and
-
   http://wordpress2blogger.appspot.com/
+  http://livejournal2blogger.appspot.com/
 
 for examples of these converters hosted on Google App Engine.  Note that there
 is a huge caveat to using these hosted services at the moment in that there is 
