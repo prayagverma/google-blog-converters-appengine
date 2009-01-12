@@ -283,7 +283,9 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
     self.comments[0].link.append(self.current_post.link[0])
 
   def endComment(self, _):
-    if not self.comments[0].title:
+    # Check to see whether the comment was stored and had contents, otherwise
+    # drop it as Blogger won't accept it.
+    if self.comments and not self.comments[0].title:
       del self.comments[0]
 
   def endComment_Id(self, content):
