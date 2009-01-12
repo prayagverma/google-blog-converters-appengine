@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # FILE:     run-appengine.sh
 # PURPOSE:  Shell script for executing the Google App Engine version of the
