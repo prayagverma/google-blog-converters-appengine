@@ -251,16 +251,20 @@ class LiveJournal2Blogger(object):
     post_entry.author = atom.Author(atom.Name(text=self.username))
     post_entry.category.append(
         atom.Category(scheme=CATEGORY_KIND, term=POST_KIND))
-    post_entry.content = atom.Content(
-        content_type='html', text=self._TranslateContent(lj_event['event']))
     post_entry.published = atom.Published(
         text=self._ToBlogTime(self._FromLjTime(lj_event['eventtime'])))
     post_entry.updated = atom.Updated(
         text=self._ToBlogTime(self._FromLjTime(lj_event['eventtime'])))
 
+    content = lj_event['event']
+    if isinstance(lj_event['event'], xmlrpclib.Binary):
+      content = lj_event['event'].data
+    post_entry.content = atom.Content(
+        content_type='html', text=self._TranslateContent(content))
+
     subject = lj_event.get('subject', None)
     if not subject:
-      subject = self._CreateSnippet(lj_event['event'])
+      subject = self._CreateSnippet(content)
     post_entry.title = atom.Title(text=subject)
 
     # Turn the taglist into individual labels
