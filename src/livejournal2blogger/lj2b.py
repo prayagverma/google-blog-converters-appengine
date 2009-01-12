@@ -141,7 +141,7 @@ class UrlFetcherFactory(object):
     pass
 
 
-class GaeUrlFetcher():
+class GaeUrlFetcher(object):
 
   def fetch(self, url, payload, headers={}):
     response = urlfetch.fetch(url, payload, 'POST', headers)
