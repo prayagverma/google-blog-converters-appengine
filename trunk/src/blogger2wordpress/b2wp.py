@@ -34,6 +34,7 @@ __author__ = 'JJ Lueck (jlueck@gmail.com)'
 # Constants
 ###########################
 
+BLOGGER_URL = 'http://www.blogger.com/'
 BLOGGER_NS = 'http://www.blogger.com/atom/ns#'
 KIND_SCHEME = 'http://schemas.google.com/g/2005#kind'
 
@@ -136,10 +137,16 @@ class Blogger2Wordpress(object):
     if entry.control and entry.control.draft:
       status = 'draft'
 
+    # If no link is present in the Blogger entry, just link
+    if entry.GetAlternateLink():
+      link = entry.GetAlternateLink().href
+    else:
+      link = BLOGGER_URL
+
     # Create the actual item element
     post_item = wordpress.Item(
         title = title,
-        link = entry.GetAlternateLink().href,
+        link = link,
         pubDate = self._ConvertPubDate(entry.published.text),
         creator = entry.author[0].name.text,
         content = self._ConvertContent(entry.content.text),
