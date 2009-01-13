@@ -3,14 +3,16 @@
 
 == Current Support ==
 
-||                || <p>*Converted to*</p> || [http://www.wordpress.com/ WordPress] || [http://www.blogger.com/ Blogger] || [http://www.movabletype.com/ MovableType] || [http://www.livejournal.com/ LiveJournal] ||
-|| <p>*Converted from*</p> ||  || || || || ||
+|| <p align="center">*---*</p> || <p>*Converted to*</p> || [http://www.wordpress.com/ WordPress] || [http://www.blogger.com/ Blogger] || [http://www.movabletype.com/ MovableType] || [http://www.livejournal.com/ LiveJournal] ||
+|| <p>*Converted from*</p> || <p align="center">*---*</p> || || || || ||
 || [http://www.wordpress.com/ WordPress] || || <p align="center">*---*</p> || <p align="center">*X*</p> || || ||
 || [http://www.blogger.com/ Blogger] || || <p align="center">*X*</p> || <p align="center">*---*</p> || <p align="center">*X*</p> || ||
 || [http://www.movabletype.com MovableType] || || || <p align="center">*X*</p> || <p align="center">*---*</p> || ||
 || [http://www.livejournal.com/ LiveJournal] || || || <p align="center">*X*</p> || || <p align="center">*---*</p> ||
 
-<p></p>
+<p>
+*X* = Supported conversion, *---* = Identity conversion
+</p>
 
 == Requested Support =
 
