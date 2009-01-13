@@ -297,7 +297,7 @@ class MovableType2Blogger(object):
     return self._Encode(content)
 
   def _Encode(self, content):
-    return unicode(content, errors='ignore')
+    return content.decode('utf-8', 'replace').encode('utf-8')
 
   def _FromMtTime(self, mt_time):
     return time.strptime(mt_time, "%m/%d/%Y %I:%M:%S %p")
