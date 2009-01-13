@@ -15,10 +15,12 @@
 # limitations under the License.
 
 import cgi
+import traceback
+import StringIO
+
 import gdata.service
 import gdata.urlfetch
 from google.appengine.ext import webapp
-import traceback
 import mt2b
 import wsgiref.handlers
 
@@ -39,7 +41,7 @@ class TransformPage(webapp.RequestHandler):
     # Run the blogger import processor
     translator = mt2b.MovableType2Blogger()
     try:
-      translator.Translate(input, self.response.out)
+      translator.Translate(StringIO.StringIO(input), self.response.out)
       self.response.content_type = 'application/atom+xml'
       self.response.headers['Content-Disposition'] = \
           'attachment;filename=blogger-export.xml'
