@@ -38,17 +38,17 @@ class TransformPage(webapp.RequestHandler):
 
     # Run the blogger import processor
     translator = wp2b.Wordpress2Blogger()
-    #try:
-    translator.Translate(input, self.response.out)
-    self.response.content_type = 'application/atom+xml'
-    self.response.headers['Content-Disposition'] = \
-      'attachment;filename=blogger-export.xml'
-    #except:
+    try:
+      translator.Translate(input, self.response.out)
+      self.response.content_type = 'application/atom+xml'
+      self.response.headers['Content-Disposition'] = \
+         'attachment;filename=blogger-export.xml'
+    except:
       # Just provide an error message to the user.
-    #  self.response.content_type = 'text/plain'
-    #  self.response.out.write("Error encountered during conversion.<br/><br/>")
-    #  exc = traceback.format_exc()
-    #  self.response.out.write(exc.replace('\n', '<br/>'))
+      self.response.content_type = 'text/plain'
+      self.response.out.write("Error encountered during conversion.<br/><br/>")
+      exc = traceback.format_exc()
+      self.response.out.write(exc.replace('\n', '<br/>'))
 
 
 def main():
