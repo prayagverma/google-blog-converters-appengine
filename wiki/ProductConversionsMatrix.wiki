@@ -1,6 +1,8 @@
 #summary The list of supported blog conversions
 #labels Featured,Phase-Support
 
+== Current Support ==
+
 ||                || <p>*Converted to*</p> || [http://www.wordpress.com/ WordPress] || [http://www.blogger.com/ Blogger] || [http://www.movabletype.com/ MovableType] || [http://www.livejournal.com/ LiveJournal] ||
 || <p>*Converted from*</p> ||  || || || || ||
 || [http://www.wordpress.com/ WordPress] || || <p align="center">*---*</p> || <p align="center">*X*</p> || || ||
@@ -8,9 +10,11 @@
 || [http://www.movabletype.com MovableType] || || || <p align="center">*X*</p> || <p align="center">*---*</p> || ||
 || [http://www.livejournal.com/ LiveJournal] || || || <p align="center">*X*</p> || || <p align="center">*---*</p> ||
 
-= Proposed Support =
+<p></p>
+
+== Requested Support =
 
   * [http://www.s9y.com Serendipity]
-  * Bloxsom 
-  * Blojsom
-  * Expression Engine
+  * [http://www.bloxsom.com Bloxsom] 
+  * [http://www.blojsom Blojsom]
+  * [http://www.expressionengine.com Expression Engine]
