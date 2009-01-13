@@ -3,6 +3,11 @@
 
 == Current Support ==
 
+<p>
+This matrix indicates which native conversions are currently supported by this project.  Note that every service can be converted to Blogger export format.  
+The Blogger export format can be used as an intermediary to another conversion (e.g. converting LiveJournal to Blogger and then Blogger to MovableType).
+</p>
+
 || <p align="center">*---*</p> || <p>*Converted to*</p> || [http://www.wordpress.com/ WordPress] || [http://www.blogger.com/ Blogger] || [http://www.movabletype.com/ MovableType] || [http://www.livejournal.com/ LiveJournal] ||
 || <p>*Converted from*</p> || <p align="center">*---*</p> || || || || ||
 || [http://www.wordpress.com/ WordPress] || || <p align="center">*---*</p> || <p align="center">*X*</p> || || ||
