@@ -15,6 +15,8 @@
 # limitations under the License.
 
 import cgi
+import xmlrpclib
+
 import gdata.service
 import gdata.urlfetch
 from google.appengine.ext import webapp
@@ -41,12 +43,16 @@ class FetchAndTransformPage(webapp.RequestHandler):
       self.response.content_type = 'application/atom+xml'
       self.response.headers['Content-Disposition'] = \
           'attachment;filename=blogger-export.xml'
+    except xmlrpclib.Fault, f:
+      # Provide just the fault message, ususally "password incorrect"
+      self.response.content_type = 'text/html'
+      self.response.out.write(cgi.escape(str(f)))
     except:
       # Just provide an error message to the user.
-      self.response.content_type = 'text/plain'
+      self.response.content_type = 'text/html'
       self.response.out.write("Error encountered during conversion.<br/><br/>")
       exc = traceback.format_exc()
-      self.response.out.write(exc.replace('\n', '<br/>'))
+      self.response.out.write(cgi.escape(exc).replace('\n', '<br/>'))
 
 
 def main():
