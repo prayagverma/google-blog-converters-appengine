@@ -316,7 +316,9 @@ class LiveJournal2Blogger(object):
       response_doc = xml.dom.minidom.parseString(response)
 
       for comment in response_doc.getElementsByTagName('comment'):
-        comments.append(self._TranslateComment(comment, user_map))
+        # If this has been marked as a deleted comment, do not add it
+        if comment.getAttribute('state') != 'D':
+            comments.append(self._TranslateComment(comment, user_map))
         current_id = int(comment.getAttribute('id'))
 
       if current_id >= max_id:
