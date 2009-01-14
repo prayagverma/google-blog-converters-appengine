@@ -82,9 +82,14 @@ class Blogger2MovableType(object):
 
       if entry_kind.endswith("#comment"):
         # This entry will be a comment, grab the post that it goes to
-        post_id = self._ParsePostId(
-            entry.FindExtensions('in-reply-to')[0].attributes['ref'])
-        post_item = posts_map.get(post_id, None)
+        in_reply_to = entry.FindExtensions('in-reply-to')
+        post_item = None
+        # Check to see that the comment has a corresponding post entry
+        if in_reply_to:
+          post_id = self._ParsePostId(in_reply_to[0].attributes['ref'])
+          post_item = posts_map.get(post_id, None)
+
+        # Found the post for the comment, add the commment to it
         if post_item:
           # The author email may not be included in the file
           author_email = ''
