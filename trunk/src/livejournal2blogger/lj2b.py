@@ -269,6 +269,9 @@ class LiveJournal2Blogger(object):
 
     # Turn the taglist into individual labels
     taglist = lj_event['props'].get('taglist', None)
+    if isinstance(taglist, xmlrpclib.Binary):
+      taglist = taglist.data
+
     if taglist:
       tags = taglist.split(',')
       for tag in tags:
