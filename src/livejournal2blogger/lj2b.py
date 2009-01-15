@@ -265,12 +265,16 @@ class LiveJournal2Blogger(object):
     subject = lj_event.get('subject', None)
     if not subject:
       subject = self._CreateSnippet(content)
+    if not isinstance(subject, basestring):
+      subject = str(subject)
     post_entry.title = atom.Title(text=subject)
 
     # Turn the taglist into individual labels
     taglist = lj_event['props'].get('taglist', None)
     if isinstance(taglist, xmlrpclib.Binary):
       taglist = taglist.data
+    elif not isinstance(taglist, basestring):
+      taglist = str(taglist)
 
     if taglist:
       tags = taglist.split(',')
@@ -362,6 +366,8 @@ class LiveJournal2Blogger(object):
     return comment_entry
 
   def _TranslateContent(self, content):
+    if not isinstance(content, basestring):
+      content = str(content)
     return content.replace('\r\n', '<br/>')
 
   def _GetAuthTokens(self):
