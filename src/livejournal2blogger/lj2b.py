@@ -422,7 +422,7 @@ class LiveJournal2Blogger(object):
     """Creates a snippet of content.  The maximum size being 53 characters,
     50 characters of data followed by elipses.
     """
-    content = re.sub('</?[^>/]+/?>', '', content)
+    content = re.sub('<[^>]+>', '', content)
     if isinstance(content, str):
       content = content.decode('UTF-8', 'ignore')
     if len(content) < 50:
