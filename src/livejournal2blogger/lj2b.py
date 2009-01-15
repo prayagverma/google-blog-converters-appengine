@@ -349,8 +349,10 @@ class LiveJournal2Blogger(object):
     comment_entry.updated = atom.Updated(
         text=self._GetText(xml_comment.getElementsByTagName('date')[0]))
 
-    subject = self._GetText(xml_comment.getElementsByTagName('subject')[0])
-    if not subject:
+    subject = xml_comment.getElementsByTagName('subject')
+    if subject:
+      subject = self._GetText(subject[0])
+    else:
       subject = self._CreateSnippet(comment_body)
     comment_entry.title = atom.Title(text=subject)
 
