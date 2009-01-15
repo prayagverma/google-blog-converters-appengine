@@ -423,9 +423,11 @@ class LiveJournal2Blogger(object):
     50 characters of data followed by elipses.
     """
     content = re.sub('</?[^>/]+/?>', '', content)
+    if isinstance(content, str):
+      content = content.decode('UTF-8', 'ignore')
     if len(content) < 50:
       return content
-    return content[0:49] + '...'
+    return content[:49] + '...'
 
   def _GetText(self, xml_elem):
     """Assumes the text for the element is the only child of the element."""
