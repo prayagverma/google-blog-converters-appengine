@@ -193,6 +193,7 @@ class LiveJournal2Blogger(object):
         atom.Link(href=DUMMY_URI, rel='self', link_type=ATOM_TYPE))
     feed.link.append(
         atom.Link(href=DUMMY_URI, rel='alternate', link_type=HTML_TYPE))
+    feed.updated = atom.Updated(text=self._ToBlogTime(time.gmtime()))
 
     # Grab the list of posts
     posts = self._GetPosts()
