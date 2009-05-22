@@ -1,0 +1,89 @@
+<html>
+  <head>
+    <title>Wordpress2Blogger conversion utility</title>
+  </head>
+  <body>
+
+    <div style="text-align:center">
+      <div>
+        <img src="/wp2b.png" />
+      </div>
+
+      <p>
+      </p>
+      <p><strong>
+      Ever wanted to move your WordPress blogs over to Blogger?  This site can
+      aid in the process!</strong>
+      </p>
+
+      <h3>Instructions</h3>
+      <table style="width:600px" align="center"><tr><td style="text-align:left">
+        <ol>
+          <li>Login to your <a href="http://www.wordpress.com">WordPress</a> 
+              account and navigate to the Dashboard for
+              the blog that you'd like to transfer to Blogger.</li>
+          <li>Click on the <b>Manage</b> tab below the Blog name.</li>
+          <li>Click on the <b>Export</b> link below the <b>Manage</b> tab.</li>
+          <li>Download the WordPress WXR export file by clicking on <b>Download
+              Export File.</b></li>
+          <li>Save this file to your local machine.</li>
+          <li>Browse to that saved document with the form below and click 
+              <b>Convert</b>.
+
+            <p>
+              <form method="post" action="/wp2b/" enctype="multipart/form-data">
+                <input type="file" name="input-file" size="30" />
+                <input type="submit" value="Convert" class="button"/>
+              </form>
+            </p>
+          </li>
+          <li>Save this file to your local machine.  This file will be
+              the contents of your posts/comments from WordPress in a Blogger 
+              export file.</li>
+          <li>Login to your <a href="http://www.blogger.com">Blogger</a> 
+              or create a new user.</li>
+          <li>Once logged in, click on the <b>Create a Blog</b> link from the
+              user dashboard, and then click on the <b>Import Blog Tool</b></li>
+          <li>Follow the instructions and upload your Blogger export file when 
+              prompted.</li>
+          <li>After completing the import wizard, you should have a set of
+              imported posts from WordPress that you can now publish to
+              Blogger.  Have fun!</li>
+        </ol>
+      </td></tr></table>
+
+      <span style="background-color:#ffff00;color:#ff0000;width:400px">
+        <b>NOTE:</b> 
+        This hosted application will only allow downloads smaller
+        than 1MB.
+      </span>
+      <br/><br/>
+      <span>
+        For information on how to run this conversion on your own, visit the
+        open source project hosted at 
+        <a href="http://code.google.com/p/google-blog-converters-appengine/">code.google.com</a>
+      </span>
+
+      <p>
+        <img src="http://code.google.com/appengine/images/appengine-silver-120x30.gif"
+             alt="Powered by Google App Engine" />
+      </p>
+    </div>
+
+    <script type="text/javascript">
+      if ("wordpress2blogger.appspot.com" == document.location.host) {
+        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." :
+          "http://www.");
+        document.write(unescape("%3Cscript src='" + gaJsHost +
+           "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+      }
+    </script>
+    <script type="text/javascript">
+      try {
+        var pageTracker = _gat._getTracker("UA-1921589-4");
+        pageTracker._trackPageview();
+      } catch(err) {}
+    </script>
+
+  </body>
+</html>

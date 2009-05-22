@@ -1,0 +1,55 @@
+AUTHOR: admin
+TITLE: My first post
+BASENAME: my_first_post
+STATUS: Publish
+ALLOW COMMENTS: 1
+CONVERT BREAKS: richtext
+ALLOW PINGS: 1
+PRIMARY CATEGORY: New
+CATEGORY: New
+CATEGORY: published
+DATE: 11/13/2008 02:16:10 PM
+TAGS: first,goodtag
+-----
+BODY:
+This is the body of the post.<br /><br />Here is some <b>formatted</b> text.<br /> 
+-----
+EXTENDED BODY:
+This is the extended body (whatever that is)<br />
+-----
+EXCERPT:
+
+-----
+KEYWORDS:
+keyword, post
+-----
+
+COMMENT: 
+AUTHOR: JumpBox Admin User
+EMAIL: jlueck@google.com
+IP: 172.31.47.193
+URL: 
+DATE: 11/13/2008 03:04:07 PM
+This is the first comment.
+-----
+
+COMMENT:
+AUTHOR: JumpBox Admin User
+EMAIL: jlueck@google.com
+IP: 172.31.47.193
+URL: 
+DATE: 11/13/2008 03:04:37 PM
+And this is the second comment.
+-----
+
+COMMENT:
+AUTHOR: JJ
+EMAIL: jlueck@alum.mit.edu
+IP: 172.31.47.193
+URL: 
+DATE: 11/13/2008 03:06:35 PM
+Wait, JJ wants to comment as well.
+-----
+
+
+--------

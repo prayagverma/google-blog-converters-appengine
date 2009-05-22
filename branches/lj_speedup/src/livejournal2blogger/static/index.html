@@ -1,0 +1,86 @@
+<html>
+  <head>
+    <title>Livejournal2Blogger conversion utility</title>
+  </head>
+
+  <style type="text/css">
+
+  </style>
+
+  <body>
+
+    <div style="text-align:center">
+
+      <h3>Instructions</h3>
+      <table style="width:600px" align="center"><tr><td style="text-align:left">
+        <ol>
+          <li>Login to LiveJournal with the following form:
+            <p>
+              <form style="background-color: #cfe7ff; padding: 5px;" method="post" action="/lj2b/">
+                <table cellpadding="2" cellspacing="2" align="center">
+                  <tr>
+                    <th><label for="login_user">LiveJournal Username:</label></th>
+                    <td><input name="username" size="24" id="login_user" tabindex="1" type="text"></td>
+                  </tr>
+                  <tr>
+                    <th><label for="login_password">LiveJournal Password:</label></th>
+                    <td style="white-space: nowrap;"><input name="password" size="15" tabindex="2" type="password">
+                      <input value="Login" tabindex="3" type="submit">
+                    </td>
+                  </tr>
+                </table>
+              </form>
+            </p>
+          </li>
+          <li>The browser will prompt you to save a file to your local machine.
+              This file will be the contents of your posts/comments from
+              LiveJournal in a Blogger export file.</li>
+          <li>Login to your <a href="http://www.blogger.com">Blogger</a> 
+              or create a new user.</li>
+          <li>Once logged in, click on the <b>Create a Blog</b> link from the
+              user dashboard, and then click on the <b>Import Blog Tool</b></li>
+          <li>Follow the instructions and upload your Blogger export file when 
+              prompted.</li>
+          <li>After completing the import wizard, you should have a set of
+              imported posts from LiveJournal that you can now publish to
+              Blogger.  Have fun!</li>
+        </ol>
+      </td></tr></table>
+
+      <span style="background-color:#ffff00;color:#ff0000;width:400px; padding:5px">
+        <b>NOTE:</b> 
+        This hosted application will only allow downloads smaller
+        than 1MB.
+      </span>
+      <br/><br/>
+      <span>
+        For information on how to run this conversion on your own, visit the
+        open source project hosted at 
+        <a href="http://code.google.com/p/google-blog-converters-appengine/">
+          code.google.com
+        </a>
+      </span>
+
+      <p>
+        <img src="http://code.google.com/appengine/images/appengine-silver-120x30.gif"
+             alt="Powered by Google App Engine" />
+      </p>
+    </div>
+
+    <script type="text/javascript">
+      if ("livejournal2blogger.appspot.com" == document.location.host) {
+        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." :
+          "http://www.");
+        document.write(unescape("%3Cscript src='" + gaJsHost +
+           "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+      }
+    </script>
+    <script type="text/javascript">
+      try {
+        var pageTracker = _gat._getTracker("UA-1921589-3");
+        pageTracker._trackPageview();
+      } catch(err) {}
+    </script>
+
+  </body>
+</html>

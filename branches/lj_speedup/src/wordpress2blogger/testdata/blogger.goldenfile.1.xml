@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ns0:feed xmlns:ns0="http://www.w3.org/2005/Atom">
+  <ns0:title type="html">LiberateWordpress</ns0:title>
+  <ns0:generator>Blogger</ns0:generator>
+  <ns0:link href="http://localhost/wordpress" rel="self" type="application/atom+xml"/>
+  <ns0:link href="http://localhost/wordpress" rel="alternate" type="text/html"/>
+  <ns0:updated>2008-04-02T19:28:33Z</ns0:updated>
+  <ns0:entry>
+    <ns0:category scheme="http://schemas.google.com/g/2005#kind" term="http://schemas.google.com/blogger/2008/kind#post"/>
+    <ns0:id>post-9</ns0:id>
+    <ns0:author>
+      <ns0:name>jlueck</ns0:name>
+    </ns0:author>
+    <ns0:content type="html">Welcome to &amp;lt;a href=&amp;quot;http://wordpress.com/&amp;quot;&amp;gt;WordPress.com&amp;lt;/a&amp;gt;. This is your first post. Edit or delete it and start blogging!</ns0:content>
+    <ns0:published>2008-01-11T20:23:05Z</ns0:published>
+    <ns0:title type="html">Hello world!</ns0:title>
+    <ns0:link href="http://localhost/wordpress/?p=9" rel="self" type="application/atom+xml"/>
+    <ns0:link href="http://localhost/wordpress/?p=9" rel="alternate" type="text/html"/>
+  </ns0:entry>
+  <ns0:entry>
+    <ns0:category scheme="http://schemas.google.com/g/2005#kind" term="http://schemas.google.com/blogger/2008/kind#comment"/>
+    <ns0:id>post-9.comment-2</ns0:id>
+    <ns0:author>
+      <ns0:name>Mr WordPress</ns0:name>
+      <ns0:uri>http://wordpress.com/</ns0:uri>
+    </ns0:author>
+    <ns0:content type="html">Hi, this is a comment.</ns0:content>
+    <ns0:published>2008-01-11T20:23:05Z</ns0:published>
+    <ns0:title type="text">Hi, this is a comment.</ns0:title>
+    <ns0:link href="http://localhost/wordpress/?p=9" rel="self" type="application/atom+xml"/>
+    <ns1:in-reply-to xmlns:ns1="http://purl.org/syndication/thread/1.0" ref="post-9" type="application/atom+xml"/>
+  </ns0:entry>
+  <ns0:entry>
+    <ns0:category scheme="http://schemas.google.com/g/2005#kind" term="http://schemas.google.com/blogger/2008/kind#post"/>
+    <ns0:id>post-10</ns0:id>
+    <ns0:author>
+      <ns0:name>jlueck</ns0:name>
+    </ns0:author>
+    <ns0:content type="html">I really enjoy drinking dunkin donuts.   I also really enjoy they might be giants.&lt;br/&gt;&lt;br/&gt;Which is why I enjoy this:&lt;br/&gt;&lt;br/&gt;&lt;object type="application/x-shockwave-flash" data="http://video.google.com/googleplayer.swf?docId=-8756242902799338281" height="326" width="400"&gt;&lt;br/&gt;      &lt;param name="allowScriptAccess" value="never"&gt;&lt;br/&gt;      &lt;param name="movie" value="http://video.google.com/googleplayer.swf?docId=-8756242902799338281"&gt;&lt;br/&gt;      &lt;param name="quality" value="best"&gt;&lt;br/&gt;      &lt;param name="bgcolor" value="#ffffff"&gt;&lt;br/&gt;      &lt;param name="scale" value="noScale"&gt;&lt;br/&gt;      &lt;param name="wmode" value="window"&gt;&lt;/object&gt;</ns0:content>
+    <ns0:published>2008-01-11T20:34:39Z</ns0:published>
+    <ns0:title type="html">Dunkin Donuts … a lifestyle</ns0:title>
+    <ns0:link href="http://localhost/wordpress/?p=10" rel="self" type="application/atom+xml"/>
+    <ns0:link href="http://localhost/wordpress/?p=10" rel="alternate" type="text/html"/>
+  </ns0:entry>
+  <ns0:entry>
+    <ns0:category scheme="http://schemas.google.com/g/2005#kind" term="http://schemas.google.com/blogger/2008/kind#comment"/>
+    <ns0:id>post-10.comment-3</ns0:id>
+    <ns0:author>
+      <ns0:name>jlueck</ns0:name>
+    </ns0:author>
+    <ns0:content type="html">This is a nice video.  Well done.</ns0:content>
+    <ns0:published>2008-01-11T20:35:07Z</ns0:published>
+    <ns0:title type="text">This is a nice video.  Well done.</ns0:title>
+    <ns0:link href="http://localhost/wordpress/?p=10" rel="self" type="application/atom+xml"/>
+    <ns1:in-reply-to xmlns:ns1="http://purl.org/syndication/thread/1.0" ref="post-10" type="application/atom+xml"/>
+  </ns0:entry>
+  <ns0:entry>
+    <ns0:category scheme="http://schemas.google.com/g/2005#kind" term="http://schemas.google.com/blogger/2008/kind#post"/>
+    <ns0:id>post-1</ns0:id>
+    <ns0:author>
+      <ns0:name>admin</ns0:name>
+    </ns0:author>
+    <ns0:content type="html">Welcome to WordPress. This is your first post. Edit or delete it, then start blogging!</ns0:content>
+    <ns0:published>2008-03-13T13:34:11Z</ns0:published>
+    <ns0:title type="html">Hello world!</ns0:title>
+    <ns0:link href="http://localhost/wordpress/?p=1" rel="self" type="application/atom+xml"/>
+    <ns0:link href="http://localhost/wordpress/?p=1" rel="alternate" type="text/html"/>
+  </ns0:entry>
+  <ns0:entry>
+    <ns0:category scheme="http://schemas.google.com/g/2005#kind" term="http://schemas.google.com/blogger/2008/kind#comment"/>
+    <ns0:id>post-1.comment-1</ns0:id>
+    <ns0:author>
+      <ns0:name>Mr WordPress</ns0:name>
+      <ns0:uri>http://wordpress.org/</ns0:uri>
+    </ns0:author>
+    <ns0:content type="html">To delete a comment, just log in and view the post's comments. There you will have the option to edit or delete them.</ns0:content>
+    <ns0:published>2008-03-13T13:34:11Z</ns0:published>
+    <ns0:title type="text">To delete a comment, just log in and view the pos...</ns0:title>
+    <ns0:link href="http://localhost/wordpress/?p=1" rel="self" type="application/atom+xml"/>
+    <ns1:in-reply-to xmlns:ns1="http://purl.org/syndication/thread/1.0" ref="post-1" type="application/atom+xml"/>
+  </ns0:entry>
+  <ns0:entry>
+    <ns0:category scheme="http://www.blogger.com/atom/ns#" term="DataPortability"/>
+    <ns0:category scheme="http://www.blogger.com/atom/ns#" term="upload"/>
+    <ns0:category scheme="http://schemas.google.com/g/2005#kind" term="http://schemas.google.com/blogger/2008/kind#post"/>
+    <ns0:id>post-12</ns0:id>
+    <ns0:author>
+      <ns0:name>admin</ns0:name>
+    </ns0:author>
+    <ns0:content type="html">&lt;a href="http://localhost/wordpress/wp-content/uploads/2008/04/android_cardback.png"&gt;&lt;img src="http://localhost/wordpress/wp-content/uploads/2008/04/android_cardback.png" title="android_cardback" class="align-none size-medium attachment wp-att-11" height="74" width="76" /&gt;&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;This is the little android mascot.  I uploaded him to wordpress, let's see if I can export it.</ns0:content>
+    <ns0:published>2008-04-02T14:28:33Z</ns0:published>
+    <ns0:title type="html"/>
+    <ns0:link href="http://localhost/wordpress/?p=12" rel="self" type="application/atom+xml"/>
+    <ns0:link href="http://localhost/wordpress/?p=12" rel="alternate" type="text/html"/>
+  </ns0:entry>
+</ns0:feed>

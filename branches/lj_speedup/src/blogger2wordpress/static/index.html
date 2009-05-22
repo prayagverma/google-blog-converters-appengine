@@ -1,0 +1,46 @@
+<html>
+  <head>
+    <title>Blogger2Wordpress conversion utility</title>
+  </head>
+  <body>
+
+    <div style="text-align:center">
+      <div>
+        <img src="/b2wp.png" />
+      </div>
+
+      <p style="width:500px; margin:auto">
+        Browse for a Blogger export file press 'Convert' to translate
+        that file into a Wordpress WXR export file suitable for importing
+        into a Wordpress blog.
+      </p>
+
+      <p>
+        <form method="post" action="/b2wp/" enctype="multipart/form-data">
+          <input type="file" name="input-file" size="50" />
+          <input type="submit" value="Convert" class="button"/>
+        </form>
+      </p>
+
+      <p>
+        <img src="http://code.google.com/appengine/images/appengine-silver-120x30.gif"
+             alt="Powered by Google App Engine" />
+      </p>
+    </div>
+
+    <script type="text/javascript">
+      if ("blogger2wordpress.appspot.com" == document.location.host) {
+        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." :
+          "http://www.");
+        document.write(unescape("%3Cscript src='" + gaJsHost +
+           "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+      }
+    </script>
+    <script type="text/javascript">
+      try {
+        var pageTracker = _gat._getTracker("UA-1921589-5");
+        pageTracker._trackPageview();
+      } catch(err) {}
+    </script>
+  </body>
+</html>

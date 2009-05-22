@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ns0:feed xmlns:ns0="http://www.w3.org/2005/Atom">
+  <ns0:title type="html">Data Portability Testbed</ns0:title>
+  <ns0:generator>Blogger</ns0:generator>
+  <ns0:link href="http://jlueck.wordpress.com" rel="self" type="application/atom+xml"/>
+  <ns0:link href="http://jlueck.wordpress.com" rel="alternate" type="text/html"/>
+  <ns0:updated>2008-05-16T22:46:22Z</ns0:updated>
+  <ns0:entry>
+    <ns0:category scheme="http://www.blogger.com/atom/ns#" term="NewTag"/>
+    <ns0:category scheme="http://www.blogger.com/atom/ns#" term="DataPortability"/>
+    <ns0:category scheme="http://www.blogger.com/atom/ns#" term="wordpress2blogger"/>
+    <ns0:category scheme="http://schemas.google.com/g/2005#kind" term="http://schemas.google.com/blogger/2008/kind#post"/>
+    <ns0:id>post-17</ns0:id>
+    <ns0:author>
+      <ns0:name>jlueck</ns0:name>
+    </ns0:author>
+    <ns0:content type="html">We're having fun with tags, labels, and categories today on the Data Portability Testbed blog.&lt;br/&gt;&lt;br/&gt;What's &lt;strong&gt;your&lt;/strong&gt; take on newlines, huh?&lt;br/&gt;&lt;br/&gt;Next up, video and embedded links which Wordpress outputs in a non-HTML format.</ns0:content>
+    <ns0:published>2008-05-16T19:40:23Z</ns0:published>
+    <ns0:title type="html">A test of newlines and labels/categories</ns0:title>
+    <ns0:link href="http://jlueck.wordpress.com/2008/05/16/a-test-of-newlines-and-labelscategories/" rel="self" type="application/atom+xml"/>
+    <ns0:link href="http://jlueck.wordpress.com/2008/05/16/a-test-of-newlines-and-labelscategories/" rel="alternate" type="text/html"/>
+  </ns0:entry>
+  <ns0:entry>
+    <ns0:category scheme="http://schemas.google.com/g/2005#kind" term="http://schemas.google.com/blogger/2008/kind#comment"/>
+    <ns0:id>post-17.comment-8</ns0:id>
+    <ns0:author>
+      <ns0:name>jlueck</ns0:name>
+      <ns0:email>jlueck@google.com</ns0:email>
+    </ns0:author>
+    <ns0:content type="html">Now let's try to see what it takes to make a comment work correctly.&lt;br/&gt;&lt;br/&gt;Can you see this?</ns0:content>
+    <ns0:published>2008-05-16T20:24:37Z</ns0:published>
+    <ns0:title type="text">Now let's try to see what it takes to make a comm...</ns0:title>
+    <ns0:link href="http://jlueck.wordpress.com/2008/05/16/a-test-of-newlines-and-labelscategories/" rel="self" type="application/atom+xml"/>
+    <ns1:in-reply-to xmlns:ns1="http://purl.org/syndication/thread/1.0" ref="post-17" type="application/atom+xml"/>
+  </ns0:entry>
+  <ns0:entry>
+    <ns0:category scheme="http://schemas.google.com/g/2005#kind" term="http://schemas.google.com/blogger/2008/kind#post"/>
+    <ns0:id>post-18</ns0:id>
+    <ns0:author>
+      <ns0:name>jlueck</ns0:name>
+    </ns0:author>
+    <ns0:content type="html">Here is an example of a post that contains an image.&lt;br/&gt;&lt;br/&gt;The first image is one that's hosted on another site:&lt;br/&gt;&lt;br/&gt;&lt;img src="http://blacktomato.typepad.com/photos/uncategorized/2007/07/20/homer_simpson.jpg" alt="Homer Simpson" /&gt;&lt;br/&gt;&lt;br/&gt;The second is an image that I uploaded of the Android mascot:&lt;br/&gt;&lt;br/&gt;&lt;a href="http://jlueck.files.wordpress.com/2008/05/android_cardback.png"&gt;&lt;img class="alignnone size-medium wp-image-19" src="http://jlueck.files.wordpress.com/2008/05/android_cardback.png?w=76" alt="Android Mascot" width="76" height="74" /&gt;&lt;/a&gt;</ns0:content>
+    <ns0:published>2008-05-16T21:21:04Z</ns0:published>
+    <ns0:title type="html">An image test</ns0:title>
+    <ns0:link href="http://jlueck.wordpress.com/2008/05/16/an-image-test/" rel="self" type="application/atom+xml"/>
+    <ns0:link href="http://jlueck.wordpress.com/2008/05/16/an-image-test/" rel="alternate" type="text/html"/>
+  </ns0:entry>
+  <ns0:entry>
+    <ns0:category scheme="http://www.blogger.com/atom/ns#" term="wordpress2blogger"/>
+    <ns0:category scheme="http://schemas.google.com/g/2005#kind" term="http://schemas.google.com/blogger/2008/kind#post"/>
+    <ns0:id>post-20</ns0:id>
+    <ns0:author>
+      <ns0:name>jlueck</ns0:name>
+    </ns0:author>
+    <ns0:content type="html">Okay, it's on to something a little trickier.  In the version of WordPress that I downloaded a few months ago from their open source site, any link to a video would be exported as non-HTML, like&lt;br/&gt;&lt;blockquote&gt;[googlevideo link-to-video]&lt;/blockquote&gt;&lt;br/&gt;Let me see how it goes if I embed a YouTube, Google Video, and DailyMotion videos:&lt;br/&gt;&lt;ul&gt;&lt;br/&gt;	&lt;li&gt; YouTube&lt;object height="350" width="425"&gt;&lt;br/&gt;      &lt;param name="movie" value="http://www.youtube.com/v/pY8jaGs7xJ0"&gt;&lt;br/&gt;      &lt;param name="wmode" value="transparent"&gt;&lt;br/&gt;      &lt;embed src="http://www.youtube.com/v/pY8jaGs7xJ0;rel=0" type="application/x-shockwave-flash" wmode="transparent" height="350" width="425"&gt;&lt;br/&gt;      &lt;/object&gt;&lt;/li&gt;&lt;br/&gt;&lt;/ul&gt;&lt;br/&gt;	&lt;li&gt; Google Video &lt;object type="application/x-shockwave-flash" data="http://video.google.com/googleplayer.swf?docid=-8756242902799338281" height="326" width="400"&gt;&lt;br/&gt;      &lt;param name="allowScriptAccess" value="never"&gt;&lt;br/&gt;      &lt;param name="movie" value="http://video.google.com/googleplayer.swf?docid=-8756242902799338281"&gt;&lt;br/&gt;      &lt;param name="quality" value="best"&gt;&lt;br/&gt;      &lt;param name="bgcolor" value="#ffffff"&gt;&lt;br/&gt;      &lt;param name="scale" value="noScale"&gt;&lt;br/&gt;      &lt;param name="wmode" value="window"&gt;&lt;/object&gt;&lt;/li&gt;&lt;br/&gt;	&lt;li&gt; Daily Motion &lt;object height="254" width="425"&gt;&lt;br/&gt;      &lt;param name="movie" value="http://www.dailymotion.com/swf/xk6sn"&gt;&lt;br/&gt;      &lt;param name="allowfullscreen" value="true"&gt;&lt;br/&gt;      &lt;embed src="http://www.dailymotion.com/swf/xk6sn" type="application/x-shockwave-flash" allowfullscreen="true" height="334" width="425"&gt;&lt;br/&gt;      &lt;/object&gt;&lt;/li&gt;&lt;br/&gt;	&lt;li&gt; Embedded video (MySpace) -- not supported&lt;/li&gt;</ns0:content>
+    <ns0:published>2008-05-16T22:46:22Z</ns0:published>
+    <ns0:title type="html">A video test</ns0:title>
+    <ns0:link href="http://jlueck.wordpress.com/2008/05/16/a-video-test/" rel="self" type="application/atom+xml"/>
+    <ns0:link href="http://jlueck.wordpress.com/2008/05/16/a-video-test/" rel="alternate" type="text/html"/>
+  </ns0:entry>
+  <ns0:entry>
+    <ns0:category scheme="http://schemas.google.com/g/2005#kind" term="http://schemas.google.com/blogger/2008/kind#comment"/>
+    <ns0:id>post-20.comment-9</ns0:id>
+    <ns0:author>
+      <ns0:name>jlueck</ns0:name>
+      <ns0:email>jlueck@google.com</ns0:email>
+    </ns0:author>
+    <ns0:content type="html">I like those videos.</ns0:content>
+    <ns0:published>2008-05-16T22:49:10Z</ns0:published>
+    <ns0:title type="text">I like those videos.</ns0:title>
+    <ns0:link href="http://jlueck.wordpress.com/2008/05/16/a-video-test/" rel="self" type="application/atom+xml"/>
+    <ns1:in-reply-to xmlns:ns1="http://purl.org/syndication/thread/1.0" ref="post-20" type="application/atom+xml"/>
+  </ns0:entry>
+</ns0:feed>
