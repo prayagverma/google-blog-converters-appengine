@@ -15,12 +15,14 @@
 # limitations under the License.
 
 import getopt
+import logging
 import md5
 import os
 import os.path
 import re
 import sys
 import time
+import traceback
 import urllib2
 import xmlrpclib
 import xml.dom.minidom
@@ -209,17 +211,39 @@ class LiveJournal2Blogger(object):
   def _GetPosts(self):
     sync_time = ''
     posts = []
-    while True:
+    num_failures = 0
+    max_failures = 5
+    while num_failures < max_failures:
 
-      # Get the next round of items which contain posts/comments
-      challenge, challenge_response = self._GetAuthTokens()
-      response = self.server.LJ.XMLRPC.syncitems({
-          'username': self.username,
-          'ver': 1,
-          'lastsync': sync_time,
-          'auth_method': 'challenge',
-          'auth_challenge': challenge,
-          'auth_response': challenge_response})
+      start_time = time.time()
+      try:
+        # Get the next round of items which contain posts/comments
+        challenge, challenge_response = self._GetAuthTokens()
+        logging.info('Retrieving auth tokens: %d ms' % ((time.time() - start_time) * 1000))
+      except:
+        logging.error(traceback.format_exc())
+        num_failures += 1
+        time.sleep(0.5)
+        continue
+
+      start_time = time.time()
+      try:
+        response = self.server.LJ.XMLRPC.syncitems({
+            'username': self.username,
+            'ver': 1,
+            'lastsync': sync_time,
+            'auth_method': 'challenge',
+            'auth_challenge': challenge,
+            'auth_response': challenge_response})
+        logging.info('Sync-ing %d items: %d ms' %
+                     (len(response['syncitems']), (time.time() - start_time) * 1000))
+      except:
+        logging.error('Failure after %d ms' % ((time.time() - start_time) * 1000))
+        logging.error(traceback.format_exc())
+        num_failures += 1
+        time.sleep(0.5)
+        continue
+
       # Break out if we have no more items
       if len(response['syncitems']) == 0:
         break
@@ -228,17 +252,50 @@ class LiveJournal2Blogger(object):
       for item in response['syncitems']:
         item_type, item_id = item['item'].split('-')
         if item_type == 'L':
-          challenge, challenge_response = self._GetAuthTokens()
-          event = self.server.LJ.XMLRPC.getevents({
-              'username': self.username,
-              'ver': 1,
-              'selecttype': 'one',
-              'itemid': item_id,
-              'auth_method': 'challenge',
-              'auth_challenge': challenge,
-              'auth_response': challenge_response})
-          posts.append(self._TranslatePost(event['events'][0]))
+
+          while num_failures < max_failures:
+
+            start_time = time.time()
+            try:
+              # Get the next round of items which contain posts/comments
+              challenge, challenge_response = self._GetAuthTokens()
+              logging.info('Retrieving auth tokens: %d ms' % ((time.time() - start_time) * 1000))
+            except:
+              logging.error('Failure after %d ms' % ((time.time() - start_time) * 1000))
+              logging.error(traceback.format_exc())
+              num_failures += 1
+              time.sleep(0.5)
+              continue
+
+            start_time = time.time()
+            try:
+              event = self.server.LJ.XMLRPC.getevents({
+                  'username': self.username,
+                  'ver': 1,
+                  'selecttype': 'one',
+                  'itemid': item_id,
+                  'auth_method': 'challenge',
+                  'auth_challenge': challenge,
+                  'auth_response': challenge_response})
+              logging.info('Retrieved item %s: %d ms' %
+                           (item_id, (time.time() - start_time) * 1000))
+              posts.append(self._TranslatePost(event['events'][0]))
+              break
+
+            except:
+              logging.error('Failure after %d ms' % ((time.time() - start_time) * 1000))
+              logging.error(traceback.format_exc())
+              num_failures += 1
+              time.sleep(0.5)
+              continue
+
+          if num_failures > max_failures:
+            raise 'TooManyFailures'
+
         sync_time = item['time']
+
+    if num_failures > max_failures:
+      raise 'TooManyFailures'
 
     return posts
 
