@@ -35,6 +35,7 @@ CATEGORY_NS = 'http://www.blogger.com/atom/ns#'
 CATEGORY_KIND = 'http://schemas.google.com/g/2005#kind'
 POST_KIND = 'http://schemas.google.com/blogger/2008/kind#post'
 COMMENT_KIND = 'http://schemas.google.com/blogger/2008/kind#comment'
+SETTING_KIND = 'http://schemas.google.com/blogger/2008/kind#setting'
 ATOM_TYPE = 'application/atom+xml'
 HTML_TYPE = 'text/html'
 ATOM_THREADING_NS = 'http://purl.org/syndication/thread/1.0'
@@ -129,6 +130,7 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
     # Create the top-level feed object
     self.feed = BloggerGDataFeed()
     self.feed.generator = atom.Generator(text='Blogger')
+    self.feed.entry.append(self.CreateCommentSettingEntry())
     self.elem_stack = []
     self.contents = ''
     self.outfile = outfile
@@ -142,12 +144,23 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
       return self.elem_stack[0]
     return None
 
+  def CreateCommentSettingEntry(self):
+    entry = gdata.GDataEntry()
+    entry.id = atom.Id('blog.settings.BLOG_COMMENT_ACCESS')
+    entry.category.append(atom.Category(scheme=CATEGORY_KIND,
+                                        term=SETTING_KIND))
+    entry.published = atom.Published(self._ToBlogTime(time.gmtime(time.time())))
+    entry.title = atom.Title(text='Who can comment')
+    entry.content = atom.Content('text', text='ANYONE')
+    entry.author = atom.Author(atom.Name(text='ANYONE'))
+    return entry
+
   ###################################
   # ContentHandler methods
   ###################################
 
   def startElement(self, name, attrs):
-    self.elem_stack.insert(0, name)    
+    self.elem_stack.insert(0, name)
     handler = getattr(self, 'start%s' % name.split(':')[-1].title(), None)
     if handler:
       handler()
