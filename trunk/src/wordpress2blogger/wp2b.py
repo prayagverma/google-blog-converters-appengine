@@ -251,6 +251,10 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
     if self.current_post:
       self.current_post.id = atom.Id('post-' + content)
 
+  def endGuid(self, content):
+    if self.current_post and content and not self.current_post.id:
+      self.current_post.id = atom.Id('post-' + content)
+
   def endEncoded(self, content):
     if self.current_post:
       content = self.TranslateContent(content)
@@ -283,6 +287,9 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
     self.comments[0].extension_elements.append(InReplyTo(post_id))
     # Make a link to the comment, which actually points to the original post
     self.comments[0].link.append(self.current_post.link[0])
+
+    # Initialize the comment's identifier, in case there isn't one
+    self.comments[0].id = atom.Id('%s.comment' % post_id)
 
   def endComment(self, _):
     # Check to see whether the comment was stored and had contents, otherwise
