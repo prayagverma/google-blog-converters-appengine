@@ -24,6 +24,11 @@ import xml.sax
 
 import gdata
 from gdata import atom
+try:
+  from google.appengine.api import urlfetch
+  ON_GAE = True
+except ImportError:
+  ON_GAE = False
 
 __author__ = 'JJ Lueck (jlueck@gmail.com)'
 
@@ -138,11 +143,11 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
     try:
       xml.sax.parseString(doc, self)
     except xml.sax.SAXParseException, e:
-      outfile.write('Input WordPress document is not valid XML!!\n<br/>')
-      outfile.write('\n<br/>')
-      outfile.write('Error appears around line %d, column %d\n<br/>\n' %
-                    (e.getLineNumber(), e.getColumnNumber()))
-      outfile.write(self.GetSaxErrorString(doc, e.getLineNumber(), e.getColumnNumber()))
+      error_string = self.GetSaxErrorString(doc, e.getLineNumber(), e.getColumnNumber())
+      if ON_GAE:
+        error_string = re.compile('\n').subn('<br/>', error_string)[0]
+        error_string = re.compile('  ').subn('&nbsp;&nbsp;', error_string)[0]
+      outfile.write(error_string)
 
   def GetParentElem(self):
     if self.elem_stack:
@@ -427,16 +432,20 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
   def GetSaxErrorString(self, doc, line_num, column_num):
     lines = doc.splitlines()
     bad_line = lines[line_num - 1]
-    print bad_line
     if len(bad_line) > 60:
       start_column = max(column_num - 30, 0)
       end_column = start_column + 60
     else:
       start_column = 0
       end_column = len(bad_line)
-    error_string = bad_line[start_column:end_column]
-    error_string = '%s%s^' % ((' ' * start_column),
-                               ('-' * (column_num - start_column - 1)))
+    error_string = 'Input WordPress document is not valid XML!!\n\n'
+    error_string += ('Error appears around line %d, column %d\n\n' %
+                     (line_num, column_num))
+    error_string += bad_line[start_column:end_column]
+    if error_string[-1] != '\n':
+      error_string += '\n'
+    error_string += '%s^' % ('-' * (column_num - start_column - 1))
+    error_string += '\n'
     return error_string
 
   def _CreateSnippet(self, content):
