@@ -26,5 +26,5 @@ if [ "${EXTRA_ARGS}" == "" ]; then
 fi
 
 PYTHONPATH=${PROJ_DIR}/lib \
-   python ${PROJ_DIR}/lib/googleappengine/dev_appserver.py \
+   python ${PROJ_DIR}/lib/googleappengine/python/dev_appserver.py \
        -p ${PORT} ${PROJ_DIR}/src/${EXTRA_ARGS}

@@ -21,4 +21,4 @@ SHIFT
 
 :RUNCMD
 set PYTHONPATH=%PYTHONPATH%;%BASEPATH%\lib
-python "%BASEPATH%\lib\googleappengine\dev_appserver.py" -p %PORT% "%BASEPATH%\src\%1"
+python "%BASEPATH%\lib\googleappengine\python\dev_appserver.py" -p %PORT% "%BASEPATH%\src\%1"
