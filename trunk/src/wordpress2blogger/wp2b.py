@@ -135,7 +135,14 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
     self.current_post = None
     self.categories = set()
     self.comments = []
-    xml.sax.parseString(doc, self)
+    try:
+      xml.sax.parseString(doc, self)
+    except xml.sax.SAXParseException, e:
+      print 'Input WordPress document is not valid XML!!'
+      print
+      print ('Error appears around line %d, column %d' %
+             (e.getLineNumber(), e.getColumnNumber()))
+      print self.GetSaxErrorString(doc, e.getLineNumber(), e.getColumnNumber())
 
   def GetParentElem(self):
     if self.elem_stack:
@@ -416,6 +423,21 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
     if not result:
       return ''
     return result.string
+
+  def GetSaxErrorString(self, doc, line_num, column_num):
+    lines = doc.splitlines()
+    bad_line = lines[line_num - 1]
+    print bad_line
+    if len(bad_line) > 60:
+      start_column = max(column_num - 30, 0)
+      end_column = start_column + 60
+    else:
+      start_column = 0
+      end_column = len(bad_line)
+    error_string = bad_line[start_column:end_column]
+    error_string = '%s%s^' % ((' ' * start_column),
+                              ('-' * (column_num - start_column - 1)))
+    return error_string
 
   def _CreateSnippet(self, content):
     """Creates a snippet of content.  The maximum size being 53 characters,
