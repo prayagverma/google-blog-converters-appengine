@@ -138,11 +138,11 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
     try:
       xml.sax.parseString(doc, self)
     except xml.sax.SAXParseException, e:
-      print 'Input WordPress document is not valid XML!!'
-      print
-      print ('Error appears around line %d, column %d' %
-             (e.getLineNumber(), e.getColumnNumber()))
-      print self.GetSaxErrorString(doc, e.getLineNumber(), e.getColumnNumber())
+      outfile.write('Input WordPress document is not valid XML!!\n<br/>')
+      outfile.write('\n<br/>')
+      outfile.write('Error appears around line %d, column %d\n<br/>\n' %
+                    (e.getLineNumber(), e.getColumnNumber()))
+      outfile.write(self.GetSaxErrorString(doc, e.getLineNumber(), e.getColumnNumber()))
 
   def GetParentElem(self):
     if self.elem_stack:
@@ -436,7 +436,7 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
       end_column = len(bad_line)
     error_string = bad_line[start_column:end_column]
     error_string = '%s%s^' % ((' ' * start_column),
-                              ('-' * (column_num - start_column - 1)))
+                               ('-' * (column_num - start_column - 1)))
     return error_string
 
   def _CreateSnippet(self, content):
