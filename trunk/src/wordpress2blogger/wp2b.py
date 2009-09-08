@@ -21,6 +21,7 @@ import sys
 import time
 import urlparse
 import xml.sax
+import xml.sax.saxutils
 
 import gdata
 from gdata import atom
@@ -143,11 +144,11 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
     try:
       xml.sax.parseString(doc, self)
     except xml.sax.SAXParseException, e:
-      error_string = self.GetSaxErrorString(doc, e.getLineNumber(), e.getColumnNumber())
+      error_string = self.GetSaxErrorString(doc, e.getLineNumber(), e.getColumnNumber(), ON_GAE)
       if ON_GAE:
-        error_string = re.compile('\n').subn('<br/>', error_string)[0]
-        error_string = re.compile('  ').subn('&nbsp;&nbsp;', error_string)[0]
-      outfile.write(error_string)
+        raise RuntimeWarning(error_string)
+      else:
+        print error_string
 
   def GetParentElem(self):
     if self.elem_stack:
@@ -429,7 +430,7 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
       return ''
     return result.string
 
-  def GetSaxErrorString(self, doc, line_num, column_num):
+  def GetSaxErrorString(self, doc, line_num, column_num, html_escape):
     lines = doc.splitlines()
     bad_line = lines[line_num - 1]
     if len(bad_line) > 60:
@@ -441,11 +442,17 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
     error_string = 'Input WordPress document is not valid XML!!\n\n'
     error_string += ('Error appears around line %d, column %d\n\n' %
                      (line_num, column_num))
-    error_string += bad_line[start_column:end_column]
+    if html_escape:
+      error_string += xml.sax.saxutils.escape(bad_line[start_column:end_column])
+    else:
+      error_string += bad_line[start_column:end_column]
     if error_string[-1] != '\n':
       error_string += '\n'
     error_string += '%s^' % ('-' * (column_num - start_column - 1))
     error_string += '\n'
+    if html_escape:
+      error_string = re.compile('\n').subn('<br/>', error_string)[0]
+      error_string = re.compile(' ').subn('&nbsp;', error_string)[0]
     return error_string
 
   def _CreateSnippet(self, content):

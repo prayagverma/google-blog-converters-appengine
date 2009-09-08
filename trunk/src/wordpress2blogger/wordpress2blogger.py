@@ -43,13 +43,15 @@ class TransformPage(webapp.RequestHandler):
       self.response.content_type = 'application/atom+xml'
       self.response.headers['Content-Disposition'] = \
          'attachment;filename=blogger-export.xml'
-    except:
+    except RuntimeWarning, e:
       # Just provide an error message to the user.
       self.response.content_type = 'text/plain'
       self.response.out.write("Error encountered during conversion.<br/><br/>")
-      exc = traceback.format_exc()
-      self.response.out.write(exc.replace('\n', '<br/>'))
-
+      self.response.out.write(str(e))
+    except:
+      self.response.content_type = 'text/plain'
+      self.response.out.write("Error encountered during conversion.<br/><br/>")
+      self.response.out.write(traceback.format_exc().replace('\n', '<br/>'))
 
 def main():
   application = webapp.WSGIApplication([('/wp2b/', TransformPage)],
