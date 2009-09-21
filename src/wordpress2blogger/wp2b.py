@@ -45,6 +45,9 @@ ATOM_TYPE = 'application/atom+xml'
 HTML_TYPE = 'text/html'
 ATOM_THREADING_NS = 'http://purl.org/syndication/thread/1.0'
 
+META_DATA_RE = re.compile('<wp:postmeta>.*?</wp:postmeta>', 
+                          re.DOTALL | re.MULTILINE)
+
 WP_YOUTUBE_RE = re.compile('\[youtube=http://www.youtube.com/watch\?v=([^\]]+)\]')
 EMBED_YOUTUBE_FMT = \
   r"""<object height="350" width="425">
@@ -142,13 +145,16 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
     self.categories = set()
     self.comments = []
     try:
-      xml.sax.parseString(doc, self)
+      xml.sax.parseString(self.RemoveMetaData(doc), self)
     except xml.sax.SAXParseException, e:
       error_string = self.GetSaxErrorString(doc, e.getLineNumber(), e.getColumnNumber(), ON_GAE)
       if ON_GAE:
         raise RuntimeWarning(error_string)
       else:
         print error_string
+
+  def RemoveMetaData(self, doc):
+    return META_DATA_RE.sub('', doc)
 
   def GetParentElem(self):
     if self.elem_stack:
