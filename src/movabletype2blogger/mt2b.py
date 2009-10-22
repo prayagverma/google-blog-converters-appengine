@@ -164,7 +164,7 @@ class MovableType2Blogger(object):
         elif tag_name == 'KEYWORDS':
           for keyword in tag_contents.split(','):
             keyword = keyword.strip()
-            if keyword != '':
+            if keyword != '' and len(post_entry.category) < 20:
               post_entry.category.append(
                   atom.Category(scheme=CATEGORY_NS, term=keyword))
 
@@ -218,7 +218,7 @@ class MovableType2Blogger(object):
 
       # Turn categories into labels
       elif key == 'CATEGORY':
-        if value != '':
+        if value != '' and len(post_entry.category) < 20:
           post_entry.category.append(
               atom.Category(scheme=CATEGORY_NS, term=value))
 
@@ -239,7 +239,7 @@ class MovableType2Blogger(object):
       elif key == 'TAGS':
         for keyword in value.split(','):
           keyword = keyword.strip()
-          if keyword != '':
+          if keyword != '' and len(post_entry.category) < 20:
             post_entry.category.append(
                 atom.Category(scheme=CATEGORY_NS, term=keyword))
 
