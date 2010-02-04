@@ -238,6 +238,9 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
     self.comments = []
 
   def endLink(self, content):
+    if not content:
+      return
+
     if self.current_post:
       self.current_post.link.append(atom.Link(href=content, rel='self',
                                               link_type=ATOM_TYPE))
@@ -245,9 +248,9 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
                                               link_type=HTML_TYPE))
     else:
       self.feed.link.append(atom.Link(href=content, rel='self',
-                                              link_type=ATOM_TYPE))
+                                      link_type=ATOM_TYPE))
       self.feed.link.append(atom.Link(href=content, rel='alternate',
-                                              link_type=HTML_TYPE))
+                                      link_type=HTML_TYPE))
 
   def endCreator(self, content):
     if self.current_post:
