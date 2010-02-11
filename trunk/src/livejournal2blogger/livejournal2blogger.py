@@ -20,6 +20,7 @@ import xmlrpclib
 import gdata.service
 import gdata.urlfetch
 from google.appengine.ext import webapp
+from google.appengine.ext.webapp.util import run_wsgi_app
 import traceback
 import lj2b
 import wsgiref.handlers
@@ -54,11 +55,11 @@ class FetchAndTransformPage(webapp.RequestHandler):
       exc = traceback.format_exc()
       self.response.out.write(cgi.escape(exc).replace('\n', '<br/>'))
 
+application = webapp.WSGIApplication([('/lj2b/', FetchAndTransformPage)],
+                                     debug=True)
 
 def main():
-  application = webapp.WSGIApplication([('/lj2b/', FetchAndTransformPage)],
-                                       debug=True)
-  wsgiref.handlers.CGIHandler().run(application)
+  run_wsgi_app(application)
 
 
 if __name__ == '__main__':
