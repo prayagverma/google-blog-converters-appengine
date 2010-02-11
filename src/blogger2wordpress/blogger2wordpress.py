@@ -18,6 +18,7 @@ import cgi
 import gdata.service
 import gdata.urlfetch
 from google.appengine.ext import webapp
+from google.appengine.ext.webapp.util import run_wsgi_app
 import b2wp
 import wsgiref.handlers
 
@@ -49,10 +50,11 @@ class TransformPage(webapp.RequestHandler):
       self.response.out.write("Error encountered during conversion.")
 
 
+application = webapp.WSGIApplication([('/b2wp/', TransformPage)],
+                                     debug=True)
+
 def main():
-  application = webapp.WSGIApplication([('/b2wp/', TransformPage)],
-                                       debug=True)
-  wsgiref.handlers.CGIHandler().run(application)
+  run_wsgi_app(application)
 
 
 if __name__ == '__main__':

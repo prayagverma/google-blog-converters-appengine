@@ -21,6 +21,7 @@ import StringIO
 import gdata.service
 import gdata.urlfetch
 from google.appengine.ext import webapp
+from google.appengine.ext.webapp.util import run_wsgi_app
 import mt2b
 import wsgiref.handlers
 
@@ -52,10 +53,11 @@ class TransformPage(webapp.RequestHandler):
       exc = traceback.format_exc()
       self.response.out.write(exc.replace('\n', '<br/>'))
 
+application = webapp.WSGIApplication([('/mt2b/', TransformPage)],
+                                     debug=True)
+
 def main():
-  application = webapp.WSGIApplication([('/mt2b/', TransformPage)],
-                                       debug=True)
-  wsgiref.handlers.CGIHandler().run(application)
+  run_wsgi_app(application)
 
 
 if __name__ == '__main__':
