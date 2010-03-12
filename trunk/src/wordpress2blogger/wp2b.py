@@ -40,6 +40,7 @@ __author__ = 'JJ Lueck (jlueck@gmail.com)'
 CATEGORY_NS = 'http://www.blogger.com/atom/ns#'
 CATEGORY_KIND = 'http://schemas.google.com/g/2005#kind'
 POST_KIND = 'http://schemas.google.com/blogger/2008/kind#post'
+PAGE_KIND = 'http://schemas.google.com/blogger/2008/kind#page'
 COMMENT_KIND = 'http://schemas.google.com/blogger/2008/kind#comment'
 ATOM_TYPE = 'application/atom+xml'
 HTML_TYPE = 'text/html'
@@ -142,6 +143,7 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
     self.contents = ''
     self.outfile = outfile
     self.current_post = None
+    self.is_page = False
     self.categories = set()
     self.comments = []
     try:
@@ -220,9 +222,12 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
       # Add the categories that we've collected
       self.current_post.category.extend(
           [atom.Category(c, CATEGORY_NS) for c in self.categories])
-      # Add the category specifying this as a post
-      self.current_post.category.append(atom.Category(scheme=CATEGORY_KIND,
-                                                      term=POST_KIND))
+      # Add the category specifying this as a post or a page
+      term = POST_KIND
+      if self.is_page:
+        term = PAGE_KIND
+      self.current_post.category.append(
+          atom.Category(scheme=CATEGORY_KIND, term=term))
       # Check to see if we need to fill in the published time
       if not self.current_post.published:
         blogger_time = self._ToBlogTime(time.gmtime(time.time()))
@@ -235,6 +240,7 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
     # Clear the state of the handler to take the next item
     self.categories = set()
     self.current_post = None
+    self.is_page = False
     self.comments = []
 
   def endLink(self, content):
@@ -266,8 +272,11 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
       self.categories.add(category)
 
   def endPost_Type(self, content):
-    if content != 'post':
+    if content != 'post' and content != 'page':
       self.current_post = None
+      self.is_page = False
+    else:
+      self.is_page = (content == 'page')
 
   def endPost_Id(self, content):
     if self.current_post:

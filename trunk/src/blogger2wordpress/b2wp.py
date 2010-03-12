@@ -122,14 +122,21 @@ class Blogger2Wordpress(object):
               date = self._ConvertDate(entry.published.text),
               content = self._ConvertContent(entry.content.text)))
 
-      elif entry_kind.endswith("#post"):
+      elif entry_kind.endswith('#post'):
         # This entry will be a post
-        post_item = self._ConvertPostEntry(entry)
+        post_item = self._ConvertEntry(entry, False)
         posts_map[self._ParsePostId(entry.id.text)] = post_item
         wxr.channel.items.append(post_item)
+
+      elif entry_kind.endswith('#page'):
+        # This entry will be a static page
+        page_item = self._ConvertEntry(entry, True)
+        posts_map[self._ParsePageId(entry.id.text)] = page_item
+        wxr.channel.items.append(page_item)
+        
     return wxr.WriteXml()
 
-  def _ConvertPostEntry(self, entry):
+  def _ConvertEntry(self, entry, is_page):
     """Converts the contents of an Atom entry into a WXR post Item element."""
 
     # A post may have an empty title, in which case the text element is None.
@@ -148,6 +155,11 @@ class Blogger2Wordpress(object):
     else:
       link = BLOGGER_URL
 
+    # Declare whether this is a post of a page
+    post_type = 'post'
+    if is_page:
+      post_type = 'page'
+
     # Create the actual item element
     post_item = wordpress.Item(
         title = title,
@@ -157,7 +169,8 @@ class Blogger2Wordpress(object):
         content = self._ConvertContent(entry.content.text),
         post_id = self._GetNextId(),
         post_date = self._ConvertDate(entry.published.text),
-        status = status)
+        status = status,
+        post_type = post_type)
 
     # Convert the categories which specify labels into wordpress labels
     for category in entry.category:
@@ -226,6 +239,12 @@ class Blogger2Wordpress(object):
   def _ParsePostId(self, text):
     """Extracts the post identifier from a Blogger entry ID."""
     matcher = re.compile('post-(\d+)')
+    matches = matcher.search(text)
+    return matches.group(1)
+
+  def _ParsePageId(self, text):
+    """Extracts the page identifier from a Blogger entry ID."""
+    matcher = re.compile('page-(\d+)')
     matches = matcher.search(text)
     return matches.group(1)
 
