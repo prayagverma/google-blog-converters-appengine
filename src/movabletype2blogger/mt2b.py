@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import codecs
 import os.path
 import logging
 import re
@@ -118,11 +119,15 @@ class MovableType2Blogger(object):
     for line in infile:
 
       # Remove whitespace
-      line = line.strip()
+      line = line.strip().lstrip(codecs.BOM_UTF8)
+      #print line, tag_name
 
       # Check for the post ending token
-      if line == '-' * 8 and tag_name != 'BODY':
+      if line == '-' * 8:
         if post_entry:
+          if tag_name == 'BODY':
+            post_entry.content = atom.Content(
+                content_type='html', text=self._TranslateContents(tag_contents))
           # Add the post to our feed
           feed.entry.insert(0, post_entry)
           last_entry = post_entry
@@ -183,7 +188,7 @@ class MovableType2Blogger(object):
       # The author key indicates the start of a post as well as the author of
       # the post entry or comment
       if key == 'AUTHOR':
-        # Create a new entry 
+        # Create a new entry
         entry = gdata.GDataEntry()
         entry.link.append(
             atom.Link(href=DUMMY_URI, rel='self', link_type=ATOM_TYPE))
@@ -257,7 +262,7 @@ class MovableType2Blogger(object):
         tag_name = key
 
       # These lines can be safely ignored
-      elif key in ('BASENAME', 'ALLOW COMMENTS', 'CONVERT BREAKS', 
+      elif key in ('BASENAME', 'ALLOW COMMENTS', 'CONVERT BREAKS',
                    'ALLOW PINGS', 'PRIMARY CATEGORY', 'IP', 'URL', 'EMAIL'):
         continue
 
@@ -300,7 +305,10 @@ class MovableType2Blogger(object):
     return content.decode('utf-8', 'replace').encode('utf-8')
 
   def _FromMtTime(self, mt_time):
-    return time.strptime(mt_time, "%m/%d/%Y %I:%M:%S %p")
+    try:
+      return time.strptime(mt_time, "%m/%d/%Y %I:%M:%S %p")
+    except ValueError:
+      return time.gmtime()
 
   def _ToBlogTime(self, time_tuple):
     """Converts a time struct to a Blogger time/date string."""
@@ -312,10 +320,8 @@ if __name__ == '__main__':
     print
     print ' Outputs the converted Blogger export file to standard out.'
     sys.exit(-1)
-    
+
   mt_file = open(sys.argv[1])
   translator = MovableType2Blogger()
   translator.Translate(mt_file, sys.stdout)
   mt_file.close()
-
-    
