@@ -37,7 +37,7 @@ class TransformPage(webapp.RequestHandler):
     translator = b2wp.Blogger2Wordpress(input)
     output = translator.Translate()
 
-    clear()
+    self.response.clear()
     self.response.charset = 'utf8'
     if output:
       # Write the document and set headers for download.
