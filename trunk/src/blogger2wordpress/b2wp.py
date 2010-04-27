@@ -76,15 +76,13 @@ class Blogger2Wordpress(object):
       A WordPress WXR export document as a string, or None on error.
     """
     # Create the top-level document and the channel associated with it.
-    wxr = wordpress.WordPressWxr()
-    wxr.channel = wordpress.Channel(
+    channel = wordpress.Channel(
         title = self.feed.title.text,
         link = self.feed.GetAlternateLink().href,
         base_blog_url = self.feed.GetAlternateLink().href,
         pubDate = self._ConvertPubDate(self.feed.updated.text))
-
     posts_map = {}
-    
+
     for entry in self.feed.entry:
 
       # Grab the information about the entry kind
@@ -126,14 +124,15 @@ class Blogger2Wordpress(object):
         # This entry will be a post
         post_item = self._ConvertEntry(entry, False)
         posts_map[self._ParsePostId(entry.id.text)] = post_item
-        wxr.channel.items.append(post_item)
+        channel.items.append(post_item)
 
       elif entry_kind.endswith('#page'):
         # This entry will be a static page
         page_item = self._ConvertEntry(entry, True)
         posts_map[self._ParsePageId(entry.id.text)] = page_item
-        wxr.channel.items.append(page_item)
-        
+        channel.items.append(page_item)
+
+    wxr = wordpress.WordPressWxr(channel=channel)
     return wxr.WriteXml()
 
   def _ConvertEntry(self, entry, is_page):
