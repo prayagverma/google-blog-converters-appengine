@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
 from xml.etree import ElementTree
 
 __author__ = 'JJ Lueck (jlueck@gmail.com)'
@@ -160,8 +161,7 @@ class Channel(WordPressObject):
   def __init__(self, title='', link='', description='', pubDate='',
                generator='http://blogger2wordpress.appspot.com',
                language='en', base_site_url='http://wordpress.com',
-               base_blog_url='http://wordpress.com',
-               categories=[], tags=[], items=[]):
+               base_blog_url='http://wordpress.com'):
     self.title = title
     self.link = link
     self.description = description
@@ -170,9 +170,9 @@ class Channel(WordPressObject):
     self.language = language
     self.base_site_url = base_site_url
     self.base_blog_url = base_blog_url
-    self.categories = categories
-    self.tags = tags
-    self.items = items
+    self.categories = []
+    self.tags = []
+    self.items = []
 
   def _ToElementTree(self):
     # Write out the metadata
