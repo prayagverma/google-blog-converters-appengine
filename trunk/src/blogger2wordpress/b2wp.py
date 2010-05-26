@@ -159,6 +159,10 @@ class Blogger2Wordpress(object):
     if is_page:
       post_type = 'page'
 
+    blogger_path_full = entry.GetAlternateLink().href.replace('http://', '')
+    blogger_blog = blogger_path_full.split('/')[0]
+    blogger_permalink = blogger_path_full[len(blogger_blog):]
+
     # Create the actual item element
     post_item = wordpress.Item(
         title = title,
@@ -169,7 +173,10 @@ class Blogger2Wordpress(object):
         post_id = self._GetNextId(),
         post_date = self._ConvertDate(entry.published.text),
         status = status,
-        post_type = post_type)
+        post_type = post_type,
+        blogger_blog = blogger_blog,
+        blogger_permalink = blogger_permalink,
+        blogger_author = entry.author[0].name.text)
 
     # Convert the categories which specify labels into wordpress labels
     for category in entry.category:

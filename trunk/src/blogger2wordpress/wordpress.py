@@ -224,7 +224,8 @@ class Item(WordPressObject):
                description='', content='', post_id='', post_date='',
                comment_status='open', ping_status='open', status='publish',
                post_parent='0', menu_order='0', post_type='post',
-               post_password=''):
+               post_password='', blogger_blog='', blogger_author='',
+               blogger_permalink=''):
     self.title = title
     self.link = link
     self.pubDate = pubDate
@@ -243,6 +244,9 @@ class Item(WordPressObject):
     self.post_password = post_password
     self.labels = []
     self.comments = []
+    self.blogger_blog = blogger_blog
+    self.blogger_permalink = blogger_permalink
+    self.blogger_author = blogger_author
 
   def _ToElementTree(self):
     root = ElementTree.Element('item')
@@ -280,6 +284,30 @@ class Item(WordPressObject):
     for label in self.labels:
       label_elem = self._SubElement(root, 'category', label)
       label_elem.set('domain', 'tag')
+
+    if self.blogger_blog:
+      post_meta_elem = ElementTree.Element('%s:postmeta' % WORDPRESS_NS_TAG)
+      self._SubElement(post_meta_elem, '%s:meta_key' % WORDPRESS_NS_TAG,
+                       'blogger_blog')
+      self._SubElement(post_meta_elem, '%s:meta_value' % WORDPRESS_NS_TAG,
+                       self.blogger_blog)
+      root.append(post_meta_elem)
+
+    if self.blogger_permalink:
+      post_meta_elem = ElementTree.Element('%s:postmeta' % WORDPRESS_NS_TAG)
+      self._SubElement(post_meta_elem, '%s:meta_key' % WORDPRESS_NS_TAG,
+                       'blogger_permalink')
+      self._SubElement(post_meta_elem, '%s:meta_value' % WORDPRESS_NS_TAG,
+                       self.blogger_permalink)
+      root.append(post_meta_elem)
+
+    if self.blogger_author:
+      post_meta_elem = ElementTree.Element('%s:postmeta' % WORDPRESS_NS_TAG)
+      self._SubElement(post_meta_elem, '%s:meta_key' % WORDPRESS_NS_TAG,
+                       'blogger_author')
+      self._SubElement(post_meta_elem, '%s:meta_value' % WORDPRESS_NS_TAG,
+                       self.blogger_author)
+      root.append(post_meta_elem)
 
     for comment in self.comments:
       root.append(comment._ToElementTree())
