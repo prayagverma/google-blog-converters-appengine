@@ -159,9 +159,12 @@ class Blogger2Wordpress(object):
     if is_page:
       post_type = 'page'
 
-    blogger_path_full = entry.GetAlternateLink().href.replace('http://', '')
-    blogger_blog = blogger_path_full.split('/')[0]
-    blogger_permalink = blogger_path_full[len(blogger_blog):]
+    blogger_blog = ''
+    blogger_permalink = ''
+    if entry.GetAlternateLink():
+      blogger_path_full = entry.GetAlternateLink().href.replace('http://', '')
+      blogger_blog = blogger_path_full.split('/')[0]
+      blogger_permalink = blogger_path_full[len(blogger_blog):]
 
     # Create the actual item element
     post_item = wordpress.Item(
