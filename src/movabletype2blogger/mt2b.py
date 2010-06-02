@@ -109,31 +109,31 @@ class MovableType2Blogger(object):
     last_updated = 0
 
     # These three variables keep the state as we parse the file
-    post_entry = None    # The current post atom.Entry to populate
-    comment_entry = None # The current comment atom.Entry to populate
-    last_entry = None    # The previous post atom.Entry if exists
-    tag_name = None      # The current name of multi-line values
-    tag_contents = ''    # The contents of multi-line values
+    post_entry = self._GetNewEntry(POST_KIND)  # The current post atom.Entry
+    comment_entry = None              # The current comment atom.Entry
+    last_entry = None                 # The previous post atom.Entry if exists
+    tag_name = None                   # The current name of multi-line values
+    tag_contents = ''                 # The contents of multi-line values
 
     # Loop through the text lines looking for key/value pairs
     for line in infile:
 
       # Remove whitespace
       line = line.strip().lstrip(codecs.BOM_UTF8)
-      #print line, tag_name
 
       # Check for the post ending token
       if line == '-' * 8:
-        if post_entry:
-          if tag_name == 'BODY':
-            post_entry.content = atom.Content(
-                content_type='html', text=self._TranslateContents(tag_contents))
-          # Add the post to our feed
-          feed.entry.insert(0, post_entry)
-          last_entry = post_entry
+        # If the body tag is still being read, add what has been read.
+        if tag_name == 'BODY':
+          post_entry.content = atom.Content(
+              content_type='html', text=self._TranslateContents(tag_contents))
+
+        # Add the post to our feed
+        feed.entry.insert(0, post_entry)
+        last_entry = post_entry
 
         # Reset the state variables
-        post_entry = None
+        post_entry = self._GetNewEntry(POST_KIND)
         comment_entry = None
         tag_name = None
         tag_contents = ''
@@ -188,28 +188,14 @@ class MovableType2Blogger(object):
       # The author key indicates the start of a post as well as the author of
       # the post entry or comment
       if key == 'AUTHOR':
-        # Create a new entry
-        entry = gdata.GDataEntry()
-        entry.link.append(
-            atom.Link(href=DUMMY_URI, rel='self', link_type=ATOM_TYPE))
-        entry.link.append(
-            atom.Link(href=DUMMY_URI, rel='alternate', link_type=HTML_TYPE))
-        entry.id = atom.Id('post-' + self._GetNextId())
         # Add the author's name
         author_name = self._Encode(value)
         if not author_name:
           author_name = 'Anonymous'
-        entry.author = atom.Author(atom.Name(text=author_name))
-
-        # Add the appropriate kind, either a post or a comment
         if tag_name == 'COMMENT':
-          entry.category.append(
-              atom.Category(scheme=CATEGORY_KIND, term=COMMENT_KIND))
-          comment_entry = entry
+          comment_entry.author.append(atom.Author(atom.Name(text=author_name)))
         else:
-          entry.category.append(
-              atom.Category(scheme=CATEGORY_KIND, term=POST_KIND))
-          post_entry = entry
+          post_entry.author.append(atom.Author(atom.Name(text=author_name)))
 
       # The title only applies to new posts
       elif key == 'TITLE' and tag_name != 'PING':
@@ -250,16 +236,18 @@ class MovableType2Blogger(object):
 
       # Update the author's email if it is present and not empty
       elif tag_name == 'COMMENT' and key == 'EMAIL' and len(value) > 0:
-        comment_entry.author.email = atom.Email(text=value)
+        comment_entry.author[-1].email = atom.Email(text=value)
 
       # Update the author's URI if it is present and not empty
       elif tag_name == 'COMMENT' and key == 'URL' and len(value) > 0:
-        comment_entry.author.uri = atom.Uri(text=value)
+        comment_entry.author[-1].uri = atom.Uri(text=value)
 
       # If any of these keys are used, they contain information beyond this key
       # on following lines
       elif key in ('COMMENT', 'BODY', 'EXTENDED BODY', 'EXCERPT', 'KEYWORDS', 'PING'):
         tag_name = key
+        if key == 'COMMENT':
+          comment_entry = self._GetNewEntry(COMMENT_KIND)
 
       # These lines can be safely ignored
       elif key in ('BASENAME', 'ALLOW COMMENTS', 'CONVERT BREAKS',
@@ -281,6 +269,17 @@ class MovableType2Blogger(object):
 
     # Serialize the feed object
     outfile.write(str(feed))
+
+  def _GetNewEntry(self, kind):
+    entry = gdata.GDataEntry()
+    entry.link.append(
+        atom.Link(href=DUMMY_URI, rel='self', link_type=ATOM_TYPE))
+    entry.link.append(
+        atom.Link(href=DUMMY_URI, rel='alternate', link_type=HTML_TYPE))
+    entry.id = atom.Id('post-' + self._GetNextId())
+    entry.category.append(
+        atom.Category(scheme=CATEGORY_KIND, term=kind))
+    return entry
 
   def _GetNextId(self):
     """Returns the next entry identifier as a string."""
