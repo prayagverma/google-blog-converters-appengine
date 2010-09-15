@@ -21,6 +21,7 @@ The Blogger export format can be used as an intermediary to another conversion (
 
 == Requested Support =
 
+  * [http://drupal.org Drupal] - See the Drupal [http://drupal.org/project/blogger_importer Blogger Importer] 
   * [http://www.s9y.com Serendipity]
   * [http://www.bloxsom.com Bloxsom] 
   * [http://www.blojsom Blojsom]
