@@ -180,6 +180,7 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
     # The element with the ns of "excerpt" should be ignored (it also isn't valid
     # XML since it's namespace is not defined.
     if (name.split(':')[0] == 'excerpt'):
+      self.contents = ''
       return
 
     handler = getattr(self, 'end%s' % name.split(':')[-1].title(), None)
@@ -317,7 +318,8 @@ class Wordpress2Blogger(xml.sax.handler.ContentHandler):
     post_id = self.current_post.id.text
     self.comments[0].extension_elements.append(InReplyTo(post_id))
     # Make a link to the comment, which actually points to the original post
-    self.comments[0].link.append(self.current_post.link[0])
+    if self.current_post.link:
+      self.comments[0].link.append(self.current_post.link[0])
 
     # Initialize the comment's identifier, in case there isn't one
     self.comments[0].id = atom.Id('%s.comment' % post_id)
