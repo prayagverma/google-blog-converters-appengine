@@ -168,7 +168,7 @@ class LiveJournal2Blogger(object):
      export format.
   """
 
-  def __init__(self, username, password, server='livejournal.com'):
+  def __init__(self, username, password, server='www.livejournal.com'):
     self.username = username
     self.password = password
     self.server_name = server
@@ -519,7 +519,7 @@ if __name__ == '__main__':
   # Store the parsed results
   username = None
   password = None
-  server = 'livejournal.com'
+  server = 'www.livejournal.com'
 
   # Process options
   for opt, arg in opts:
